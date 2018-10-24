@@ -1,4 +1,4 @@
-package com.darktech.tarag;
+package com.darktech.flfes;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.darktech.flfes.TApplication;
+import com.darktech.flfes.signUpProfileActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

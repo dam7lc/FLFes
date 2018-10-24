@@ -1,4 +1,4 @@
-package com.darktech.tarag;
+package com.darktech.flfes;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,6 +20,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.darktech.flfes.TApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -251,7 +253,7 @@ public class signUpProfileActivity extends Activity {
             int res = in.getInt("response");
             switch(res){
                 case 0:
-                    Intent feedintent = new Intent(getApplicationContext(), FeedActivity.class);
+                    Intent feedintent = new Intent(getApplicationContext(), com.darktech.flfes.FeedActivity.class);
                     feedintent.putExtra("phone", phone);
                     feedintent.putExtra("pref", intrSex);
                     startActivity(feedintent);
