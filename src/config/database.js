@@ -1,3 +1,3 @@
 module.exports = {
-	'url': 'mongodb://localhost/nodelogin'
+	'url': 'mongodb://localhost/flfesdb'
 };

@@ -1,4 +1,4 @@
-package com.darktech.tarag;
+package com.darktech.flfes;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.darktech.flfes.TApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,7 +93,7 @@ public class MainActivity extends Activity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signup = new Intent(getApplicationContext(), signUpActivity.class);
+                Intent signup = new Intent(getApplicationContext(), com.darktech.flfes.signUpActivity.class);
                 startActivityForResult(signup,0);
             }
         });
@@ -102,7 +104,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                Intent login = new Intent(getApplicationContext(), loginActivity.class);
+                Intent login = new Intent(getApplicationContext(), com.darktech.flfes.loginActivity.class);
                 startActivityForResult(login,1);
             }
         });

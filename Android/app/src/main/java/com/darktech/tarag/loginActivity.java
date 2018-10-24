@@ -1,4 +1,4 @@
-package com.darktech.tarag;
+package com.darktech.flfes;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.darktech.flfes.TApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +92,7 @@ public class loginActivity extends Activity {
             res = in.getInt("response");
             switch(res) {
                 case 0:
-                    Intent profile = new Intent(getApplicationContext(), ProfileActivity.class);
+                    Intent profile = new Intent(getApplicationContext(), com.darktech.flfes.ProfileActivity.class);
                     profile.putExtra("phone", phone);
                     startActivity(profile);
                     runOnUiThread(new Runnable() {
@@ -121,7 +123,7 @@ public class loginActivity extends Activity {
                     });
                     break;
                 case 3:
-                    Intent signup = new Intent(this, signUpProfileActivity.class);
+                    Intent signup = new Intent(this, com.darktech.flfes.signUpProfileActivity.class);
                     signup.putExtra("phone", phone);
                     startActivity(signup);
                     runOnUiThread(new Runnable() {

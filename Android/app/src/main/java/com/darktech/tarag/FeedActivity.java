@@ -1,4 +1,4 @@
-package com.darktech.tarag;
+package com.darktech.flfes;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.darktech.flfes.TApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;

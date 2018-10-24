@@ -1,4 +1,4 @@
-package com.darktech.tarag;
+package com.darktech.flfes;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.darktech.flfes.TApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -133,7 +135,7 @@ public class signUpActivity extends Activity {
                     Toast.makeText(getApplicationContext(), S,Toast.LENGTH_SHORT).show();
                 }
             });
-            Intent signup = new Intent(this, signUpProfileActivity.class);
+            Intent signup = new Intent(this, com.darktech.flfes.signUpProfileActivity.class);
             signup.putExtra("phone", phone);
             startActivity(signup);
             finish();
