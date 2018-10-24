@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Settings page</title>
+	<% include partials/head %>
+</head>
+<body class="home">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  		<a class="navbar-brand" href="/profile">REDFES</a>
+  		
+  		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+		  </button>
+
+  		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    		<ul class="navbar-nav mr-auto">
+      			<li class="nav-item">
+        			<a class="nav-link" href="/profile">Home <span class="sr-only">(current)</span></a>
+      			</li>
+      			<li class="nav-item active">
+        			<a class="nav-link" href="/settings">Settings</a>
+      			</li>
+      			<li class="nav-item dropdown">
+        			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          				Options
+        			</a>
+        			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          				<a class="dropdown-item" href="#">Action</a>
+          				<a class="dropdown-item" href="#">Another action</a>
+          				<div class="dropdown-divider"></div>
+          				<a class="dropdown-item" href="#">Something else here</a>
+        			</div>
+      			</li>
+     			<li class="nav-item">
+        			<a class="nav-link disabled" href="#">Disabled</a>
+      			</li>
+    		</ul>
+    		<form class="form-inline my-2 my-lg-0">
+      			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    		</form>
+  		</div>
+	</nav>
+
+	<div class="container mt-5" style="color: #fff; text-shadow: 1px 1px 1px #000;">
+    <h2 class="text-center">
+      ¡Hello <%= user.local.nickname %>!
+    </h2>
+      
+    <div style="padding: 20px;">
+      <div class="container" style="justify-content: center; display: flex;">
+        <div style="width: 200px; height: 200px; background: url('/IMG/AvatarHombre.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; overflow: hidden; border-radius: 50%; border: 2px solid #0066FF;">
+
+          <img src="<%= user.local.img %>" alt="Imagen Profile" style="width: 100%; height: 100%;">
+
+        </div>
+      </div>
+
+      <br>
+        
+      <form action='/uploadimgprofile' method="POST" enctype="multipart/form-data">
+        <div class="form-group text-center">
+          <label for="file" class="subir">
+            <i class="fas fa-cloud-upload-alt"></i> Choose file
+          </label>
+
+          <input type="file" name="file" id="file" onchange="cambiar()" class="imgProfileFile"/>
+
+          <div id="info"></div>
+          <input type="submit" value="Upload" class="btn btn-success">
+        </div>
+      </form>
+    </div>
+
+    <div class="container">
+      <form action="/uploadpi" method="POST" style="padding: 20px 0 0 0;">
+          <div class="form-group">    
+            <label for="email">
+              <strong>Email address:</strong>
+            </label>
+      
+            <input type="email" name="email" id="email" required class="form-control">
+      
+            <label>
+               Now is: <strong><%= user.local.email %></strong>
+            </label>
+          </div>
+      
+          <div class="form-group">
+            <label for="career">
+              <strong>Career:</strong>
+            </label>
+
+            <select name="career" class="form-control" id="career" required>
+              <option value=""></option>
+              <option value="Arquitectura">Arquitectura</option>
+              <option value="Comunicacion y periodismo">Comunicación y periodismo</option>
+              <option value="Derecho">Derecho</option>
+              <option value="Diseño industrial">Diseño industrial</option>
+              <option value="Economía">Economía</option>
+              <option value="Ingeniería Civil">Ingeniería Civil</option>
+              <option value="Ingeniería Electrica Electrónica">Ingeniería Electrica Electrónica</option>
+              <option value="Ingeniería en Computación">Ingeniería en Computación</option>
+              <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+              <option value="Ingeniería Mecánica">Ingeniería Mecánica</option>
+              <option value="Pedagogía">Pedagogía</option>
+              <option value="Planificación para el Desarrollo Agropecuario">Planificación para el Desarrollo Agropecuario</option>
+              <option value="Relaciones Internacionales">Relaciones Internacionales</option>
+              <option value="Sociología">Sociología</option>
+            </select> 
+
+            <label>
+              Now is: <strong><%= user.local.career %></strong>
+            </label>
+          </div>
+              
+          <div class="form-group">
+            <label for="sex">
+              <strong>Sex:</strong>
+            </label>
+    
+            <select name="sex" id="sex" class="form-control" required>
+              <option value="" selected></option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+      
+            <label>
+              Now is: <strong><%= user.local.sex %></strong>
+            </label>
+          </div>
+            
+          <div class="form-group">
+            <label for="age">
+              <strong>Age:</strong>
+            </label>
+
+            <input type="number" id="age" name="age" min="18" max="100" step="1" class="form-control" required>
+              
+            <label>
+              Now is: <strong><%= user.local.age %></strong>
+            </label>
+          </div>
+
+          <div class="form-group" style="text-align: center;">
+            <input type="hidden" name="nickname" value='<%= user.local.nickname %>'>
+
+            <input type="submit" id="btn" value="Update information" class="btn btn-success">
+          </div>
+          <br>
+      </form>
+    </div>
+	</div>
+  
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script>
+    function cambiar(){
+        var pdrs = document.getElementById('file').files[0].name;
+        document.getElementById('info').innerHTML = pdrs;
+    }
+  </script>
+
+</body>
+</html>
