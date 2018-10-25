@@ -19,6 +19,7 @@
     <string name="passerror">Debe ser mayor a 6 caracteres</string>
     <string name="phone">Numero de telefono</string>
     <string name="edad">Edad</string>
+    <string name="habilidades">Habilidades</string>
     <string name="name">Nombre de usuario</string>
     <string name="sexo">Sexo</string>
     <string name="male">Hombre</string>

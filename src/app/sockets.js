@@ -20,7 +20,7 @@ module.exports = (io) => {
 				    socket.emit('loginResponse', {response: 2, error: "Contraseña incorrecta"});
 				    return;
 				}
-				if(!user.info.habilidades || !user.info.nombre || !user.info.email || !user.info.sexo || !user.info.carrera){
+				if(!user.info.habilidades || !user.info.nombre || !user.info.tel || !user.info.carrera){
 					socket.emit('loginResponse', {response: 3});
 					return;
 				}
@@ -53,32 +53,36 @@ module.exports = (io) => {
 		    });
     	});
 
-	    socket.on('uploadImg', function (data){ //Se ejecuta cuando se sube una imagen al servidor
-			console.log("received:");
-			var img = new Buffer(data['img'], 'base64');
-			var imgpath = '/IMGUS/'+data['phone']+'-profile.jpg';
-			require('fs').writeFile(__dirname+'/../public'+imgpath, img, function(err){
+		socket.on('uploadImg', function (data){ //Se ejecuta cuando se sube una imagen al servidor
+			var id;
+			var imgpath;
+			User.findOne({'info.email': data['email']}, function(err, user) {
 				if(err){
 					console.log(err);
 					return;
 				}
-			});
-			User.findOne({'local.phone': data['phone']}, function(err, user) {
-				if(err){
-					console.log(err);
-					return;
-				}
-				user.info.img = '/IMGUS/'+data['phone']+'-profile.jpg';
-				user.save(function(err) {
-					if (err) {
-						console.log(err);
-						return;
-					}
+				if(user){
+					id = user.id;
+					imgpath = '/IMGUS/'+id+'-profile.jpg';
+					console.log(imgpath);
+					console.log(id);
+					user.info.img = imgpath;
+					user.save(function(err) {
+						if (err) {
+							console.log(err);
+							return;
+						}
+					});
+					var img = new Buffer(data['img'], 'base64');
+					require('fs').writeFile(__dirname+'/../public'+imgpath, img, function(err){
+						if(err){
+							console.log(err);
+							return;
+						}
+					});
 					socket.emit('uploadImgResponse', {response: 0, img: imgpath});
-				});
-
+				}
 			});
-					
 		});
 		
 		socket.on('profileInfo', function(data){ //Se ejecuta cuando se sube informacion del perfil
@@ -91,7 +95,7 @@ module.exports = (io) => {
 					user.info.tel = data['tel'];
 					user.info.sexo = data['sexo'];
 					user.info.carrera = data['career'];
-					//TODO: añadir al array user.info.habilidades = data['hab'];
+					user.info.habilidades = data['habs'];
 					user.save(function (err){
 						if(err){
 							console.log(err);
@@ -122,7 +126,7 @@ module.exports = (io) => {
 						name: user.info.nombre,
 						tel: user.info.tel,
 						career: user.info.carrera,
-						//descr: user.local.description
+						habs: user.info.habilidades
 					});
 				}
 			});

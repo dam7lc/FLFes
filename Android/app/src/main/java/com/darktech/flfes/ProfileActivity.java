@@ -5,15 +5,20 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.darktech.flfes.TApplication;
 import com.darktech.flfes.signUpProfileActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,6 +41,7 @@ public class ProfileActivity extends Activity {
     private TextView textAge;
     private TextView textHabs;
     private Button btnEditProfile;
+    private LinearLayout llhabsprofile;
 
     private String email;
     private Socket tsocket;
@@ -53,7 +59,7 @@ public class ProfileActivity extends Activity {
         textNick = findViewById(R.id.textViewNick);
         textPhone = findViewById(R.id.textViewPhone);
         textCareer = findViewById(R.id.textViewCareer);
-        textHabs = findViewById(R.id.textViewHabs);
+        llhabsprofile = findViewById(R.id.llhabsprofile);
 
         Button btnEditProfile = findViewById(R.id.buttonProfileEdit);
 
@@ -69,6 +75,7 @@ public class ProfileActivity extends Activity {
                 edit.putExtra("email", email);
                 edit.putExtra("first", false);
                 startActivity(edit);
+                finish();
             }
         });
     }
@@ -89,7 +96,7 @@ public class ProfileActivity extends Activity {
             final String name = in.getString("name");
             final String phone = in.getString("tel");
             final String career = in.getString("career");
-            //final String descr = in.getString("descr");
+            final JSONArray habs = in.getJSONArray("habs");
 
             switch(res){
                 case 0:
@@ -102,6 +109,17 @@ public class ProfileActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            for(int i = 0; i < habs.length(); i++){
+                                try {
+                                    TextView newHab = new TextView(getApplicationContext());
+                                    newHab.setText(habs.getString(i));
+                                    newHab.setTextColor(getResources().getColor(R.color.textColor));
+                                    newHab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                                    llhabsprofile.addView(newHab);
+                                } catch(JSONException e){
+                                    Log.i("error", e.toString());
+                                }
+                            }
                             imgProfile.setImageBitmap(bm);
                             textNick.setText(name);
                             textPhone.setText(phone);
