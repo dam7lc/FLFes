@@ -11,13 +11,6 @@ const userSchema = new mongoose.Schema({
 		img: String,
 		tel: String,
 		habilidades: [String],
-	},
-	
-	ofertas: {
-		nombre: [String],
-		precio: [String],
-		tema: [String],
-		descripcion: [String]
 	}
 });
 

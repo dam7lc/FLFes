@@ -31,7 +31,8 @@
             android:name=".signUpProfileActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".FeedActivity"></activity>
+        <activity android:name=".FeedActivity" />
+        <activity android:name=".NewOfferActivity"></activity>
     </application>
 
 </manifest>

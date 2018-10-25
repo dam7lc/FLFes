@@ -1,11 +1,10 @@
 const User = require('../app/models/user');
+const Offer = require('../app/models/offer')
 
 module.exports = (io) => {
-    io.on('connection', function (socket){ //Se ejecuta con un socket.on
-		console.log("Client connected to socket");
+	io.on('connection', function (socket){ //Se ejecuta con un socket.on
 
-	    socket.on('attemptLogin', function (data) { //Se ejecuta cuando se inicia sesion
-		    console.log("Intento de inicio de sesion con "+ data['email'] + " " + data['password']);
+		socket.on('attemptLogin', function (data) { //Se ejecuta cuando se inicia sesion
 		    var email = data['email'];
 		    var password = data['password'];
 		    User.findOne({'info.email': email}, function(err, user) {
@@ -30,7 +29,6 @@ module.exports = (io) => {
 	    });
 
 	    socket.on('attemptSignup', function (data){ //Se ejecuta cuando se envia informacion de registro
-		    console.log("intento de registro con "+ data['email'] + " " + data['password']);
 		    User.findOne({'info.email': data['email']}, function(err, user) {
 		    	if (err) {
 			    	return;
@@ -64,8 +62,6 @@ module.exports = (io) => {
 				if(user){
 					id = user.id;
 					imgpath = '/IMGUS/'+id+'-profile.jpg';
-					console.log(imgpath);
-					console.log(id);
 					user.info.img = imgpath;
 					user.save(function(err) {
 						if (err) {
@@ -108,7 +104,6 @@ module.exports = (io) => {
 		});
 
 		socket.on('getProfileInfo', function(data){
-			console.log(data);
 			User.findOne({'info.email': data}, function(err, user){
 				if(err){
 					console.log(err);
@@ -129,6 +124,67 @@ module.exports = (io) => {
 						habs: user.info.habilidades
 					});
 				}
+			});
+		});
+
+		socket.on('publishOffer', function(data){
+			User.findOne({'info.email': data['email']}, function(err, user){
+				if(err){
+					console.log(err);
+					return;
+				}
+				if(user){
+					var newOffer = new Offer();
+				    newOffer.de = user.info.nombre;
+					newOffer.titulo = data['titulo'];
+					newOffer.materia = data['materia'];
+					newOffer.tema = data['tema'];
+					newOffer.descripcion = data['descripcion'];
+				    newOffer.save(function(err) {
+				    	if (err) {
+						    throw err;
+					    }
+					    socket.emit('publishOfferResponse', {response: 0}); 		
+				    	return;
+				    });
+				}
+			})
+		})
+
+		socket.on('populateOffers', function(data){
+			User.findOne({'info.email': data['email']}, function(err, user){
+				if(err){
+					console.log(err);
+					return;
+				}
+				Offer.countDocuments({'de': {"$ne": user.info.nombre}},function(err, result){
+					console.log(result);
+					if(err){
+						console.log(err);
+						return;
+					}
+					if(result == 0){
+						socket.emit('populateOffersResponse', {response: 1})
+					}
+					else{
+						Offer.find({'de': {"$ne": user.info.nombre}}, function(err, offer){
+							if(err){
+								console.log(err);
+								return;	
+							}
+							offer.forEach(function(offer){
+								socket.emit('populateOffersResponse', {
+									response: 0,
+									materia: offer.materia,
+									titulo: offer.titulo,
+									de: offer.de,
+									tema: offer.tema,
+									descripcion: offer.descripcion
+								})
+							})
+						});
+					}
+				});
 			});
 		});
 
