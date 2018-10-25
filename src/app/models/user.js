@@ -19,25 +19,6 @@ const userSchema = new mongoose.Schema({
 		tema: [String],
 		descripcion: [String]
 	}
-	
-	/*facebook: {
-		email: String,
-		password: String,
-		id: String,
-		token: String
-	},
-	twitter: {
-		email: String,
-		password: String,
-		id: String,
-		token: String
-	},
-	google: {
-		email: String,
-		password: String,
-		id: String,
-		token: String
-	}*/
 });
 
 //Generando un hash
