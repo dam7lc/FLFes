@@ -19,11 +19,11 @@ import io.socket.emitter.Emitter;
 public class signUpActivity extends Activity {
 
     private Socket tsocket;
-    private String phone;
+    private String email;
     private String password;
     private String password2;
     private EditText pass;
-    private EditText phn;
+    private EditText em;
     private EditText pass2;
     private Button btn;
 
@@ -34,7 +34,7 @@ public class signUpActivity extends Activity {
         //TODO cambiar por email
         pass = (EditText)findViewById(R.id.editTextPass);
         pass2 = (EditText)findViewById(R.id.editTextPass2);
-        phn = (EditText)findViewById(R.id.editTextUserName);
+        em = (EditText)findViewById(R.id.editTextEmail);
         btn = (Button)findViewById(R.id.buttonSendSignup);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -86,17 +86,17 @@ public class signUpActivity extends Activity {
 
 
     private void sendSignUpData(){
-        phn.setError(null);
+        em.setError(null);
         pass.setError(null);
         pass2.setError(null);
 
-        phone = phn.getText().toString().trim(); //TODO: validar caracteres en signup y que no este vacia
+        email = em.getText().toString().trim(); //TODO: validar caracteres en signup y que no este vacia
         password = pass.getText().toString().trim();
         password2 = pass2.getText().toString().trim();
 
-        if(phone.contains(" ")){
-            phn.setError(getString(R.string.phoneerror));
-            phn.requestFocus();
+        if(email.contains(" ")){
+            em.setError(getString(R.string.phoneerror));
+            em.requestFocus();
             return;
         }
 
@@ -113,7 +113,7 @@ public class signUpActivity extends Activity {
 
         JSONObject sender = new JSONObject();
         try{
-            sender.put("phone", phone);
+            sender.put("email", email);
             sender.put("password", password);
         } catch(JSONException e)
         {
@@ -136,7 +136,7 @@ public class signUpActivity extends Activity {
                 }
             });
             Intent signup = new Intent(this, com.darktech.flfes.signUpProfileActivity.class);
-            signup.putExtra("phone", phone);
+            signup.putExtra("email", email);
             startActivity(signup);
             finish();
         }
@@ -144,8 +144,8 @@ public class signUpActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    phn.setError(S);
-                    phn.requestFocus();
+                    em.setError(S);
+                    em.requestFocus();
                 }
             });
         }

@@ -10,8 +10,7 @@ const userSchema = new mongoose.Schema({
 		carrera: String,
 		img: String,
 		tel: String,
-		habilidades: String,
-		
+		habilidades: [String],
 	},
 	
 	ofertas: {
@@ -48,7 +47,7 @@ userSchema.methods.generateHash = function (password) {
 
 //Validando
 userSchema.methods.validatePassword = function (password) {
-	return bcrypt.compareSync(password, this.local.password);
+	return bcrypt.compareSync(password, this.info.password);
 }
 
 module.exports = mongoose.model('User', userSchema);

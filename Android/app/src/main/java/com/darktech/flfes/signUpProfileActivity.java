@@ -39,19 +39,15 @@ public class signUpProfileActivity extends Activity {
 
     private ImageView uploadImg;
     private EditText nick;
-    private EditText emailtext;
-    private RadioGroup sexo;
-    private RadioGroup sexoInteres;
+    private EditText phonetext;
     private Spinner spinnerCarrera;
-    private EditText edad;
-    private EditText descripcion;
+    private EditText habilidades;
     private Button uploadBtn;
     private Button nextBtn;
     private Button nextQBtn;
 
     private TApplication app;
-    private String phone;
-    private String intrSex;
+    private String email;
     private int RESULT_LOAD_IMAGE = 1;
     private Socket tsocket;
 
@@ -62,12 +58,9 @@ public class signUpProfileActivity extends Activity {
 
         uploadImg = findViewById(R.id.imageViewUpload);
         nick = findViewById(R.id.editTextNick);
-        emailtext = findViewById(R.id.editTextEmail);
-        sexo = findViewById(R.id.radioGroupSexo);
-
+        phonetext = findViewById(R.id.editTextPhone);
         spinnerCarrera = findViewById(R.id.spinnerCareer);
-        edad = findViewById(R.id.editTextAge);
-        descripcion = findViewById(R.id.editTextDescr);
+        habilidades = findViewById(R.id.editTextDescr);
         uploadBtn = findViewById(R.id.buttonUploadImg);
         nextBtn = findViewById(R.id.buttonProfileNext);
 
@@ -95,12 +88,11 @@ public class signUpProfileActivity extends Activity {
         tsocket = app.getSocket();
         tsocket.on("uploadImgResponse", onUploadResponse);
         tsocket.on("profileInfoResponse", onProfileInfoResponse);
-        tsocket.on("QuestionsInfoResponse", onQuestionsInfoResponse);
 
         Intent signup = getIntent();
-        phone = signup.getStringExtra("phone");
+        email = signup.getStringExtra("email");
         if(!signup.getBooleanExtra("first", true)){
-            tsocket.emit("getProfileInfo", phone);
+            tsocket.emit("getProfileInfo", email);
             tsocket.on("getProfileInfoResponse", ongetProfileInfoResponse);
         }
 
@@ -114,7 +106,7 @@ public class signUpProfileActivity extends Activity {
 
     private void sendProfileInfo(){
         nick.setError(null);
-        emailtext.setError(null);
+        phonetext.setError(null);
 
 
         String nname = nick.getText().toString().trim();
@@ -123,24 +115,12 @@ public class signUpProfileActivity extends Activity {
             nick.requestFocus();
             return;
         }
-        String email = emailtext.getText().toString().trim();
-        if(email.isEmpty()){
-            emailtext.setError("Por favor ingresa un email");
-            emailtext.requestFocus();
+        String phone = phonetext.getText().toString().trim();
+        if(phone.isEmpty()){
+            phonetext.setError("Por favor ingresa un email");
+            phonetext.requestFocus();
             return;
         }
-        RadioButton selected = findViewById(sexo.getCheckedRadioButtonId());
-        if(selected == null){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Error, no se ha seleccionado sexo", Toast.LENGTH_LONG).show();
-                }
-            });
-            sexo.requestFocus();
-            return;
-        }
-        String sex = selected.getText().toString().trim();
 
         String career = spinnerCarrera.getSelectedItem().toString().trim();
         if(career.equals("Carrera")){
@@ -153,29 +133,21 @@ public class signUpProfileActivity extends Activity {
             return;
         }
 
-        String age = edad.getText().toString().trim();
-        if(age.isEmpty()){
-            edad.setError("Por favor ingresa una edad");
-            edad.requestFocus();
-            return;
-        }
-        String desc = descripcion.getText().toString().trim();
+        String desc = habilidades.getText().toString().trim();
         if(desc.isEmpty()){
-            descripcion.setError("Por favor ingresa una descripcion");
-            descripcion.requestFocus();
+            habilidades.setError("Por favor ingresa tus habilidades");
+            habilidades.requestFocus();
             return;
         }
 
 
         JSONObject info = new JSONObject();
         try {
-            info.put("nick", nname);
+            info.put("name", nname);
             info.put("email", email);
-            info.put("sex", sex);
             info.put("career", career);
-            info.put("age", age);
             info.put("desc", desc);
-            info.put("phone", phone);
+            info.put("tel", phone);
             tsocket.emit("profileInfo", info);
         } catch (final JSONException e){
             runOnUiThread(new Runnable() {
@@ -187,42 +159,6 @@ public class signUpProfileActivity extends Activity {
         }
 
     }
-
-    private void sendQuestionsInfo(){
-        RadioButton selected = findViewById(sexoInteres.getCheckedRadioButtonId());
-        if(selected == null){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Error, no se ha seleccionado un interes", Toast.LENGTH_LONG).show();
-                }
-            });
-            sexoInteres.requestFocus();
-            return;
-        }
-        intrSex = selected.getText().toString().trim();
-        JSONObject info = new JSONObject();
-        try {
-            info.put("sexInteres", intrSex);
-            info.put("phone", phone);
-            tsocket.emit("QuestionsInfo", info);
-        } catch (final JSONException e){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    private Emitter.Listener onQuestionsInfoResponse = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject response = (JSONObject) args[0];
-            QuestionsInfoResponse(response);
-        }
-    };
 
     private Emitter.Listener onProfileInfoResponse = new Emitter.Listener() {
         @Override
@@ -248,47 +184,17 @@ public class signUpProfileActivity extends Activity {
         }
     };
 
-    private void QuestionsInfoResponse(JSONObject in){
-        try{
-            int res = in.getInt("response");
-            switch(res){
-                case 0:
-                    Intent feedintent = new Intent(getApplicationContext(), com.darktech.flfes.FeedActivity.class);
-                    feedintent.putExtra("phone", phone);
-                    feedintent.putExtra("pref", intrSex);
-                    startActivity(feedintent);
-                    finish();
-                    break;
-                default:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Error: wrong questions response", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            }
-        } catch (final JSONException e){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
     private void fillProfileInfo(JSONObject in){
         try {
             int res = in.getInt("response");
             switch (res){
                 case 0:
                     final String imgUrl = in.getString("img");
-                    final String nickname = in.getString("nick");
-                    final String email = in.getString("email");
-                    final String sex = in.getString("sex");
-                    final String career = in.getString("career");
-                    final String age = in.getString("age");
-                    final String descr = in.getString("descr");
+                    final String name = in.getString("name");
+                    final String phone = in.getString("tel");
+                    final String sex = in.getString("sexo");
+                    final String career = in.getString("carrera");
+                    //final String descr = in.getString("descr");
 
                     StringBuilder IMGURL = new StringBuilder();
                     String server = app.getServer();
@@ -301,10 +207,10 @@ public class signUpProfileActivity extends Activity {
                         public void run() {
 
                             uploadImg.setImageBitmap(bm);
-                            nick.setText(nickname);
-                            emailtext.setText(email);
+                            nick.setText(name);
+                            phonetext.setText(phone);
 
-                            if(sex.equals("Hombre")){
+                           /* if(sex.equals("Hombre")){
                                 sexo.check(R.id.radioButtonMale);
                             }
                             else if(sex.equals("Mujer")){
@@ -312,7 +218,7 @@ public class signUpProfileActivity extends Activity {
                             }
                             else{
                                 sexo.check(R.id.radioButtonOther);
-                            }
+                            }*/
                             boolean selected = false;
                             int count = 0;
                             while(!selected){
@@ -322,9 +228,7 @@ public class signUpProfileActivity extends Activity {
                                 }
                                 count++;
                             }
-                            edad.setText(age);
-                            descripcion.setText(descr);
-
+                            //habilidades.setText();
                         }
                     });
             }
@@ -344,29 +248,10 @@ public class signUpProfileActivity extends Activity {
             res = in.getInt("response");
             switch(res){
                 case 0:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Informacion guardada", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    /*Intent profile = new Intent(getApplicationContext(), ProfileActivity.class);
-                    profile.putExtra("phone", phone);
-                    startActivity(profile);*/
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setContentView(R.layout.activity_sign_up_questions);
-                            nextQBtn = findViewById(R.id.buttonQuestionsNext);
-                            sexoInteres = findViewById(R.id.radioGroupSexoInteres);
-                            nextQBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    sendQuestionsInfo();
-                                }
-                            });
-                        }
-                    });
+                    Intent profile = new Intent(getApplicationContext(), ProfileActivity.class);
+                    profile.putExtra("email", email);
+                    startActivity(profile);
+
 
                     break;
                 default:
@@ -447,7 +332,7 @@ public class signUpProfileActivity extends Activity {
 
                 JSONObject sender = new JSONObject();
                 try {
-                    sender.put("phone", phone);
+                    sender.put("email", email);
                     sender.put("img", encoded);
                 } catch (JSONException e){
                     runOnUiThread(new Runnable() {
