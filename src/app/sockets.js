@@ -5,22 +5,22 @@ module.exports = (io) => {
 		console.log("Client connected to socket");
 
 	    socket.on('attemptLogin', function (data) { //Se ejecuta cuando se inicia sesion
-		    console.log("Intento de inicio de sesion con "+ data['phone'] + " " + data['password']);
-		    var phone = data['phone'];
+		    console.log("Intento de inicio de sesion con "+ data['email'] + " " + data['password']);
+		    var email = data['email'];
 		    var password = data['password'];
-		    User.findOne({'local.phone': phone}, function(err, user) {
+		    User.findOne({'info.email': email}, function(err, user) {
 		    	if(err){
 			    	return;
 			    }
 			    if(!user){
-			    	socket.emit('loginResponse', {response: 1, error: "Usuario no existe"});
+			    	socket.emit('loginResponse', {response: 1, error: "el email no se encuentra registrado"});
 			    	return;
 			    }
 			    if(!user.validatePassword(password)){
 				    socket.emit('loginResponse', {response: 2, error: "Contraseña incorrecta"});
 				    return;
 				}
-				if(!user.local.description || !user.local.nickname || !user.local.email || !user.local.sex || !user.local.career || !user.local.age){
+				if(!user.info.habilidades || !user.info.nombre || !user.info.email || !user.info.sexo || !user.info.carrera){
 					socket.emit('loginResponse', {response: 3});
 					return;
 				}
@@ -30,20 +30,18 @@ module.exports = (io) => {
 	    });
 
 	    socket.on('attemptSignup', function (data){ //Se ejecuta cuando se envia informacion de registro
-		    console.log("intento de registro con "+ data['phone'] + " " + data['password']);
-		    phone = data['phone'];
-		    password = data['password'];
-		    User.findOne({'local.phone': phone}, function(err, user) {
+		    console.log("intento de registro con "+ data['email'] + " " + data['password']);
+		    User.findOne({'info.email': data['email']}, function(err, user) {
 		    	if (err) {
 			    	return;
 			    }
 		        if (user) {
-			    	socket.emit('signupResponse', {response: 1, error: "El telefono ya se encuentra registrado"});
+			    	socket.emit('signupResponse', {response: 1, error: "El email ya se encuentra registrado"});
 			    	return
 			    } else {
 				    var newUser = new User();
-				    newUser.local.phone = phone;
-				    newUser.local.password = newUser.generateHash(password);
+				    newUser.info.email = data['email'];
+				    newUser.info.password = newUser.generateHash(data['password']);
 				    newUser.save(function(err) {
 				    	if (err) {
 						    throw err;
@@ -70,15 +68,13 @@ module.exports = (io) => {
 					console.log(err);
 					return;
 				}
-				user.local.img = '/IMGUS/'+data['phone']+'-profile.jpg';
+				user.info.img = '/IMGUS/'+data['phone']+'-profile.jpg';
 				user.save(function(err) {
 					if (err) {
 						console.log(err);
 						return;
 					}
 					socket.emit('uploadImgResponse', {response: 0, img: imgpath});
-
-					
 				});
 
 			});
@@ -86,17 +82,16 @@ module.exports = (io) => {
 		});
 		
 		socket.on('profileInfo', function(data){ //Se ejecuta cuando se sube informacion del perfil
-			User.findOne({'local.phone': data['phone']}, function(err, user){
+			User.findOne({'info.email': data['email']}, function(err, user){
 				if(err){
 					console.log(err);
 					return;
 				} if(user){
-					user.local.nickname = data['nick'];
-					user.local.email = data['email'];
-					user.local.sex = data['sex'];
-					user.local.career = data['career'];
-					user.local.age = data['age'];
-					user.local.description = data['desc'];
+					user.info.nombre = data['name'];
+					user.info.tel = data['tel'];
+					user.info.sexo = data['sexo'];
+					user.info.carrera = data['career'];
+					//TODO: añadir al array user.info.habilidades = data['hab'];
 					user.save(function (err){
 						if(err){
 							console.log(err);
@@ -110,80 +105,30 @@ module.exports = (io) => {
 
 		socket.on('getProfileInfo', function(data){
 			console.log(data);
-			User.findOne({'local.phone': data}, function(err, user){
+			User.findOne({'info.email': data}, function(err, user){
 				if(err){
 					console.log(err);
 					return;
 				} if(user){
 					var imagen;
-					if(!user.local.img){
+					if(!user.info.img){
 						imagen = "/IMG/AvatarHombre.jpg"
 					} else{
-						imagen = user.local.img;
+						imagen = user.info.img;
 					}
 					socket.emit('getProfileInfoResponse', {
 						response: 0,
 						img: imagen,
-						nick: user.local.nickname,
-						email: user.local.email,
-						sex: user.local.sex,
-						career: user.local.career,
-						age: user.local.age,
-						descr: user.local.description
+						name: user.info.nombre,
+						tel: user.info.tel,
+						career: user.info.carrera,
+						//descr: user.local.description
 					});
 				}
 			});
 		});
 
-		socket.on('QuestionsInfo', function(data){
-			User.findOne({'local.phone': data['phone']}, function(err, user){
-				if(err){
-					console.log(err);
-					return;
-				}
-				if(user){
-					user.intereses.sex = data['sexInteres'];
-					user.save(function (err){
-						if(err){
-							console.log(err);
-							return;
-						}
-					});
-				}
-				socket.emit('QuestionsInfoResponse', {response: 0})
-			});
-		});
-
-		socket.on('populateFeed', function(data){
-			
-			User.find({'local.sex': data['sexInteres']}, (function(err, user){
-				if(err){
-					console.log(err);
-					return;
-				}
-
-				user.forEach(function(user){
-					if(user){
-						/*
-						var imagen = "/IMG/AvatarHombre.jpg";;
-						if(user.local.img){
-							imagen = user.local.img;
-						}*/
-						console.log(user);
-						socket.emit('populateFeedResponse', {
-							response: 0,
-							img: user.local.img,
-							nick: user.local.nickname,
-							sex: user.local.sex,
-							career: user.local.career,
-							age: user.local.age,
-							descr: user.local.description
-						});
-					}
-				});
-			}));
-		});
-
+		
 	    socket.on('disconnect', function(data){
 	    	console.log('User disconnected :( ');
     	});

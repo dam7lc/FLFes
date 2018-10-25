@@ -20,17 +20,17 @@ import io.socket.emitter.Emitter;
 public class loginActivity extends Activity {
 
     private Socket tsocket;
-    private EditText phn;
+    private EditText em;
     private EditText pass;
     private Button btn;
-    private String phone;
+    private String email;
     private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        phn = findViewById(R.id.editTextLUserName);
+        em = findViewById(R.id.editTextLEmail);
         pass = findViewById(R.id.editTextLPass);
         btn = findViewById(R.id.buttonSendLogin);
 
@@ -53,14 +53,14 @@ public class loginActivity extends Activity {
     }
 
     private void sendloginData(){
-        phn.setError(null);
+        em.setError(null);
         pass.setError(null);
 
-        phone = phn.getText().toString().trim(); //TODO: validar caracteres en login y que no este vacia
+        email = em.getText().toString().trim(); //TODO: validar caracteres en login y que no este vacia
         password = pass.getText().toString().trim();
 
-        if(phone.contains(" ")) {
-            phn.setError(getString(R.string.phoneerror));
+        if(email.contains(" ")) {
+            em.setError(getString(R.string.phoneerror));
             return;
         }
         if(password.length() < 6){
@@ -70,7 +70,7 @@ public class loginActivity extends Activity {
 
         JSONObject sender = new JSONObject();
         try{
-            sender.put("phone", phone);
+            sender.put("email", email);
             sender.put("password", password);
         } catch(JSONException e)
         {
@@ -84,7 +84,7 @@ public class loginActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                phn.setError(null);
+                em.setError(null);
                 pass.setError(null);
             }
         });
@@ -93,7 +93,7 @@ public class loginActivity extends Activity {
             switch(res) {
                 case 0:
                     Intent profile = new Intent(getApplicationContext(), com.darktech.flfes.ProfileActivity.class);
-                    profile.putExtra("phone", phone);
+                    profile.putExtra("email", email);
                     startActivity(profile);
                     runOnUiThread(new Runnable() {
                         @Override
@@ -108,8 +108,8 @@ public class loginActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            phn.setError("Usuario no existe");
-                            phn.requestFocus();
+                            em.setError("Usuario no existe");
+                            em.requestFocus();
                         }
                     });
                     break;
@@ -124,7 +124,7 @@ public class loginActivity extends Activity {
                     break;
                 case 3:
                     Intent signup = new Intent(this, com.darktech.flfes.signUpProfileActivity.class);
-                    signup.putExtra("phone", phone);
+                    signup.putExtra("email", email);
                     startActivity(signup);
                     runOnUiThread(new Runnable() {
                         @Override

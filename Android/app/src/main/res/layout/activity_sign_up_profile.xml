@@ -70,53 +70,17 @@
                 tools:layout_editor_absoluteY="311dp" />
 
             <EditText
-                android:id="@+id/editTextEmail"
+                android:id="@+id/editTextPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress"
+                android:hint="@string/phone"
+                android:inputType="phone"
                 android:textColor="@color/textColor"
                 android:textColorHint="@color/textHintColor"
                 tools:layout_editor_absoluteX="-3dp"
                 tools:layout_editor_absoluteY="357dp" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sexo"
-                android:textColor="@color/textTitle" />
-
-            <RadioGroup
-                android:id="@+id/radioGroupSexo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <RadioButton
-                    android:id="@+id/radioButtonMale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/male"
-                    android:textColor="@color/textColor" />
-
-                <RadioButton
-                    android:id="@+id/radioButtonFemale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/female"
-                    android:textColor="@color/textColor" />
-
-                <RadioButton
-                    android:id="@+id/radioButtonOther"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/other"
-                    android:textColor="@color/textColor" />
-            </RadioGroup>
 
             <Spinner
                 android:id="@+id/spinnerCareer"
@@ -127,19 +91,6 @@
                 android:spinnerMode="dialog"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="427dp" />
-
-            <EditText
-                android:id="@+id/editTextAge"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/edad"
-                android:inputType="number"
-                android:textAlignment="textStart"
-                android:textColor="@color/textColor"
-                android:textColorHint="@color/textHintColor"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="458dp" />
 
             <EditText
                 android:id="@+id/editTextDescr"

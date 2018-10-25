@@ -30,14 +30,14 @@ public class ProfileActivity extends Activity {
 
     private ImageView imgProfile;
     private TextView textNick;
-    private TextView textEmail;
+    private TextView textPhone;
     private TextView textSex;
     private TextView textCareer;
     private TextView textAge;
-    private TextView textDescription;
+    private TextView textHabs;
     private Button btnEditProfile;
 
-    private String phone;
+    private String email;
     private Socket tsocket;
     private TApplication app;
 
@@ -47,28 +47,26 @@ public class ProfileActivity extends Activity {
         setContentView(R.layout.activity_profile);
 
         Intent inProfile = getIntent();
-        phone = inProfile.getStringExtra("phone");
+        email = inProfile.getStringExtra("email");
 
         imgProfile = findViewById(R.id.imageViewProfile);
         textNick = findViewById(R.id.textViewNick);
-        textEmail = findViewById(R.id.textViewEmail);
-        textSex = findViewById(R.id.textViewSex);
+        textPhone = findViewById(R.id.textViewPhone);
         textCareer = findViewById(R.id.textViewCareer);
-        textAge = findViewById(R.id.textViewAge);
-        textDescription = findViewById(R.id.textViewDescription);
+        textHabs = findViewById(R.id.textViewHabs);
 
         Button btnEditProfile = findViewById(R.id.buttonProfileEdit);
 
         app = (TApplication)getApplication();
         tsocket = app.getSocket();
-        tsocket.emit("getProfileInfo", phone);
+        tsocket.emit("getProfileInfo", email);
         tsocket.on("getProfileInfoResponse", ongetProfileInfoResponse);
 
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent edit = new Intent(getApplicationContext(), signUpProfileActivity.class);
-                edit.putExtra("phone", phone);
+                edit.putExtra("email", email);
                 edit.putExtra("first", false);
                 startActivity(edit);
             }
@@ -88,12 +86,10 @@ public class ProfileActivity extends Activity {
         try{
             res = in.getInt("response");
             String imgUrl = in.getString("img");
-            final String nick = in.getString("nick");
-            final String email = in.getString("email");
-            final String sex = in.getString("sex");
+            final String name = in.getString("name");
+            final String phone = in.getString("tel");
             final String career = in.getString("career");
-            final String age = in.getString("age");
-            final String descr = in.getString("descr");
+            //final String descr = in.getString("descr");
 
             switch(res){
                 case 0:
@@ -107,12 +103,10 @@ public class ProfileActivity extends Activity {
                         @Override
                         public void run() {
                             imgProfile.setImageBitmap(bm);
-                            textNick.setText(nick);
-                            textEmail.setText(email);
-                            textSex.setText(sex);
+                            textNick.setText(name);
+                            textPhone.setText(phone);
                             textCareer.setText(career);
-                            textAge.setText(age);
-                            textDescription.setText(descr);
+                            //textHabs.setText();
                         }
                     });
                     break;

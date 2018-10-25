@@ -71,12 +71,12 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/email"
+                android:text="@string/phone"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textViewEmail"
+                android:id="@+id/textViewPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -85,23 +85,6 @@
                 android:textSize="18sp"
                 tools:layout_editor_absoluteX="-3dp"
                 tools:layout_editor_absoluteY="357dp" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sexo"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewSex"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:ems="10"
-                android:textColor="@color/textColor"
-                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -123,35 +106,15 @@
                 tools:layout_editor_absoluteY="427dp" />
 
             <TextView
-                android:id="@+id/textView6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/edad"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewAge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:ems="2"
-                android:textAlignment="textStart"
-                android:textColor="@color/textColor"
-                android:textSize="18sp"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="458dp" />
-
-            <TextView
                 android:id="@+id/textView7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Descripcion"
+                android:text="@string/udescription"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textViewDescription"
+                android:id="@+id/textViewHabs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="50"
