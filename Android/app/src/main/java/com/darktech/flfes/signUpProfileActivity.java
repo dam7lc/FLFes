@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.darktech.flfes.TApplication;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,10 +44,12 @@ public class signUpProfileActivity extends Activity {
     private EditText nick;
     private EditText phonetext;
     private Spinner spinnerCarrera;
-    private EditText habilidades;
     private Button uploadBtn;
     private Button nextBtn;
-    private Button nextQBtn;
+    private Button addHabsBtn;
+    private LinearLayout llHabs;
+    private EditText[] EThabs = new EditText[5];
+    private int habsc = 0;
 
     private TApplication app;
     private String email;
@@ -60,9 +65,32 @@ public class signUpProfileActivity extends Activity {
         nick = findViewById(R.id.editTextNick);
         phonetext = findViewById(R.id.editTextPhone);
         spinnerCarrera = findViewById(R.id.spinnerCareer);
-        habilidades = findViewById(R.id.editTextDescr);
         uploadBtn = findViewById(R.id.buttonUploadImg);
         nextBtn = findViewById(R.id.buttonProfileNext);
+        addHabsBtn = findViewById(R.id.buttonAddHabs);
+        llHabs = findViewById(R.id.llhabs);
+
+        addHabsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(habsc<5) {
+                            EditText newHab = new EditText(getApplicationContext());
+                            newHab.setHint("Describe una habilidad");
+                            newHab.setTextColor(getResources().getColor(R.color.textColor));
+                            newHab.setHintTextColor(getResources().getColor(R.color.textHintColor));
+                            EThabs[habsc] = newHab;
+                            habsc++;
+                            llHabs.addView(newHab);
+                        } else{
+                            Toast.makeText(getApplicationContext(), "Maximo 5 habilidades", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
 
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +135,9 @@ public class signUpProfileActivity extends Activity {
     private void sendProfileInfo(){
         nick.setError(null);
         phonetext.setError(null);
-
+        for(int i = 0; i < habsc; i++){
+            EThabs[i].setError(null);
+        }
 
         String nname = nick.getText().toString().trim();
         if(nname.isEmpty()){
@@ -132,22 +162,27 @@ public class signUpProfileActivity extends Activity {
             });
             return;
         }
-
-        String desc = habilidades.getText().toString().trim();
-        if(desc.isEmpty()){
-            habilidades.setError("Por favor ingresa tus habilidades");
-            habilidades.requestFocus();
-            return;
+        JSONArray JShabs = new JSONArray();
+        for(int i = 0; i < habsc; i++){
+            if(EThabs[i].getText().toString().trim().isEmpty()){
+                EThabs[i].setError("Por favor ingresa tu habilidad");
+                EThabs[i].requestFocus();
+                return;
+            }
+            try {
+                JShabs.put(i, EThabs[i].getText().toString().trim());
+            } catch(JSONException e){
+                Log.i("Error", e.toString());
+            }
         }
-
 
         JSONObject info = new JSONObject();
         try {
             info.put("name", nname);
             info.put("email", email);
             info.put("career", career);
-            info.put("desc", desc);
             info.put("tel", phone);
+            info.put("habs", JShabs);
             tsocket.emit("profileInfo", info);
         } catch (final JSONException e){
             runOnUiThread(new Runnable() {
@@ -192,9 +227,8 @@ public class signUpProfileActivity extends Activity {
                     final String imgUrl = in.getString("img");
                     final String name = in.getString("name");
                     final String phone = in.getString("tel");
-                    final String sex = in.getString("sexo");
-                    final String career = in.getString("carrera");
-                    //final String descr = in.getString("descr");
+                    final String career = in.getString("career");
+                    final JSONArray habs = in.getJSONArray("habs");
 
                     StringBuilder IMGURL = new StringBuilder();
                     String server = app.getServer();
@@ -206,19 +240,21 @@ public class signUpProfileActivity extends Activity {
                         @Override
                         public void run() {
 
+                            for(int i = 0; i < habs.length(); i++){
+                                try {
+                                    EditText newHab = new EditText(getApplicationContext());
+                                    newHab.setText(habs.getString(i));
+                                    newHab.setTextColor(getResources().getColor(R.color.textColor));
+                                    llHabs.addView(newHab);
+                                    EThabs[i] = newHab;
+                                    habsc++;
+                                } catch(JSONException e){
+                                    Log.i("ERROR", e.toString());
+                                }
+                            }
                             uploadImg.setImageBitmap(bm);
                             nick.setText(name);
                             phonetext.setText(phone);
-
-                           /* if(sex.equals("Hombre")){
-                                sexo.check(R.id.radioButtonMale);
-                            }
-                            else if(sex.equals("Mujer")){
-                                sexo.check(R.id.radioButtonFemale);
-                            }
-                            else{
-                                sexo.check(R.id.radioButtonOther);
-                            }*/
                             boolean selected = false;
                             int count = 0;
                             while(!selected){
@@ -228,7 +264,6 @@ public class signUpProfileActivity extends Activity {
                                 }
                                 count++;
                             }
-                            //habilidades.setText();
                         }
                     });
             }
@@ -251,7 +286,7 @@ public class signUpProfileActivity extends Activity {
                     Intent profile = new Intent(getApplicationContext(), ProfileActivity.class);
                     profile.putExtra("email", email);
                     startActivity(profile);
-
+                    finish();
 
                     break;
                 default:
