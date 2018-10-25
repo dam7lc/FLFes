@@ -92,7 +92,7 @@ public class loginActivity extends Activity {
             res = in.getInt("response");
             switch(res) {
                 case 0:
-                    Intent profile = new Intent(getApplicationContext(), com.darktech.flfes.ProfileActivity.class);
+                    Intent profile = new Intent(getApplicationContext(), FeedActivity.class);
                     profile.putExtra("email", email);
                     startActivity(profile);
                     runOnUiThread(new Runnable() {

@@ -283,9 +283,9 @@ public class signUpProfileActivity extends Activity {
             res = in.getInt("response");
             switch(res){
                 case 0:
-                    Intent profile = new Intent(getApplicationContext(), ProfileActivity.class);
-                    profile.putExtra("email", email);
-                    startActivity(profile);
+                    Intent main = new Intent(getApplicationContext(), FeedActivity.class);
+                    main.putExtra("email", email);
+                    startActivity(main);
                     finish();
 
                     break;

@@ -28,6 +28,11 @@
     <string name="udescription">¿Que habilidades te describen?</string>
     <string name="carrera">Carrera</string>
     <string name="imagen">Imagen de perfil</string>
+    <string name="nuevaoferta">Nueva oferta</string>
+    <string name="tituloOferta">Titulo</string>
+    <string name="materiaOferta">Materia</string>
+    <string name="temaOferta">Tema</string>
+    <string name="descripcionOferta">Descripcion</string>
 
     <string-array name="carreras">
         <item>Carrera</item>
