@@ -1,58 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-	<meta charset="UTF-8">
-	<title>Settings page</title>
-	<% include partials/head %>
+  <meta charset="UTF-8">
+  <title>Settings page</title>
+  <% include partials/head %>
 </head>
+
 <body class="home">
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  		<a class="navbar-brand" href="/profile">REDFES</a>
-  		
-  		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="/profile">REDFES</a>
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-		  </button>
+      </button>
 
-  		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-    		<ul class="navbar-nav mr-auto">
-      			<li class="nav-item">
-        			<a class="nav-link" href="/profile">Home <span class="sr-only">(current)</span></a>
-      			</li>
-      			<li class="nav-item active">
-        			<a class="nav-link" href="/settings">Settings</a>
-      			</li>
-      			<li class="nav-item dropdown">
-        			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          				Options
-        			</a>
-        			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          				<a class="dropdown-item" href="#">Action</a>
-          				<a class="dropdown-item" href="#">Another action</a>
-          				<div class="dropdown-divider"></div>
-          				<a class="dropdown-item" href="#">Something else here</a>
-        			</div>
-      			</li>
-     			<li class="nav-item">
-        			<a class="nav-link disabled" href="#">Disabled</a>
-      			</li>
-    		</ul>
-    		<form class="form-inline my-2 my-lg-0">
-      			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    		</form>
-  		</div>
-	</nav>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/profile">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/settings">Settings</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Options
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+          <li class="nav-item">
+              <a class="nav-link disabled" href="#">Disabled</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+  </nav>
 
-	<div class="container mt-5" style="color: #fff; text-shadow: 1px 1px 1px #000;">
+  <div class="container mt-5" style="color: #fff; text-shadow: 1px 1px 1px #000;">
     <h2 class="text-center">
-      ¡Hello <%= user.local.nickname %>!
+      ¡Hello <%= user.info.email %>!
     </h2>
+    <h3 class="text-center">
+      Please choose your data...
+    </h3>
       
     <div style="padding: 20px;">
       <div class="container" style="justify-content: center; display: flex;">
         <div style="width: 200px; height: 200px; background: url('/IMG/AvatarHombre.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; overflow: hidden; border-radius: 50%; border: 2px solid #0066FF;">
 
-          <img src="<%= user.local.img %>" alt="Imagen Profile" style="width: 100%; height: 100%;">
+          <img src="<%= user.info.img %>" alt="Imagen Profile" style="width: 100%; height: 100%;">
 
         </div>
       </div>
@@ -76,14 +81,14 @@
     <div class="container">
       <form action="/uploadpi" method="POST" style="padding: 20px 0 0 0;">
           <div class="form-group">    
-            <label for="email">
-              <strong>Email address:</strong>
+            <label for="name">
+              <strong>Name:</strong>
             </label>
       
-            <input type="email" name="email" id="email" required class="form-control">
+            <input type="text" name="name" id="name" required class="form-control">
       
             <label>
-               Now is: <strong><%= user.local.email %></strong>
+               Now is: <strong><%= user.info.nombre %></strong>
             </label>
           </div>
       
@@ -111,7 +116,7 @@
             </select> 
 
             <label>
-              Now is: <strong><%= user.local.career %></strong>
+              Now is: <strong><%= user.info.carrera %></strong>
             </label>
           </div>
               
@@ -128,35 +133,23 @@
             </select>
       
             <label>
-              Now is: <strong><%= user.local.sex %></strong>
-            </label>
-          </div>
-            
-          <div class="form-group">
-            <label for="age">
-              <strong>Age:</strong>
-            </label>
-
-            <input type="number" id="age" name="age" min="18" max="100" step="1" class="form-control" required>
-              
-            <label>
-              Now is: <strong><%= user.local.age %></strong>
+              Now is: <strong><%= user.info.sexo %></strong>
             </label>
           </div>
 
           <div class="form-group" style="text-align: center;">
-            <input type="hidden" name="nickname" value='<%= user.local.nickname %>'>
+            <input type="hidden" name="id" value='<%= user._id %>'>
 
             <input type="submit" id="btn" value="Update information" class="btn btn-success">
           </div>
           <br>
       </form>
     </div>
-	</div>
+  </div>
   
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
   <script>
     function cambiar(){
         var pdrs = document.getElementById('file').files[0].name;

@@ -1,3 +1,5 @@
+const User = require('./models/user');
+
 module.exports = (app, passport) => {
 	app.get('/', (req, res) => {
 		res.render('index');
@@ -44,29 +46,26 @@ module.exports = (app, passport) => {
 		});
 	});
 
-	const User = require('./models/user');
 	app.post('/uploadpi', (req, res) => {
-		var nickname = req.body.nickname;
-		var email = req.body.email;
+		var id = req.body.id;
+		var name = req.body.name;
 		var sex = req.body.sex;
-		var age = req.body.age;
 		var career = req.body.career;
 
-		User.findOne({'local.nickname': nickname}, function(err, user) {
+		User.findOne({'_id': id}, function(err, user) {
 		    if (err) {
 			   	return err;
 			}
 		    if (user) {
 		    	User.updateOne(
 				  {
-				  	'local.nickname' : nickname
+				  	'_id' : id
 				  },
 				  {
 				  	$set: {
-				  		'local.email' : email,
-				  		'local.sex' : sex,
-				  		'local.age' : age,
-				  		'local.career' : career
+				  		'info.nombre' : name,
+				  		'info.sexo' : sex,
+				  		'info.carrera' : career
 				  	}
 				  }
 				).then((rawResponse) => {
@@ -83,20 +82,20 @@ module.exports = (app, passport) => {
 
 	app.post('/uploadimgprofile', (req, res) => {
 	    var imgFile = req.files.file;
-	    var nickname = req.user.local.nickname;
-	    var path = `./src/public/IMGUS/${nickname}.jpg`;
-	    var imgbdPath = '/IMGUS/' + nickname + '.jpg';
+	    var id = req.user._id;
+	    var path = `./src/public/IMGUS/${id}.jpg`;
+	    var imgbdPath = '/IMGUS/' + id + '.jpg';
 	    imgFile.mv(path, err => {
 	        if(err) {
 	        	return res.status(500).send({ message : err })
 	        } else {
 			    User.updateOne(
 			   		{
-					  	'local.nickname' : nickname
+					  	'_id' : id
 					},
 					{
 					 	$set: {
-					  		'local.img' : imgbdPath
+					  		'info.img' : imgbdPath
 					  	}
 					}
 				).then((rawResponse) => {

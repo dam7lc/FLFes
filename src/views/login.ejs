@@ -10,7 +10,10 @@
 		<div class="col-sm-6 mx-auto">
 			<div class="card mt-5">
 				<div class="card-body">
-					<h1 class="text-center"><span class="fa fa-sign-in-alt"></span> Login</h1>
+					<h1 class="text-center">
+						<span class="fa fa-sign-in-alt"></span> 
+						Login
+					</h1>
 
 					<% if (message.length > 0) { %>
 						<div class="alert alert-danger">
@@ -20,8 +23,8 @@
 
 					<form action="/login" method="POST">
 						<div class="form-group">
-							<label for="nickName">NickName</label>
-							<input type="nickName" name="nickName" class="form-control">
+							<label for="email">Email</label>
+							<input type="email" name="email" class="form-control">
 						</div>
 						<div class="form-group">
 							<label for="password">Password</label>
