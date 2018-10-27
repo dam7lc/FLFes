@@ -5,43 +5,58 @@
 	<title>Login</title>
 	<% include partials/head %>
 </head>
-<body class="login">
+<body id="login">
 	<div class="container">
-		<div class="col-sm-6 mx-auto">
-			<div class="card mt-5">
-				<div class="card-body">
-					<h1 class="text-center">
-						<span class="fa fa-sign-in-alt"></span> 
-						Login
-					</h1>
+		<header class="text-left">
+			<h5><a href="/"> <i class="fa fa-home"></i> Inicio</a></h5>
+		</header>
 
-					<% if (message.length > 0) { %>
-						<div class="alert alert-danger">
-							<%= message %>
-						</div>
-					<% } %>
+		<h1 class="text-center">
+			<span class="fa fa-sign-in-alt"></span> 
+			Login
+		</h1>
 
-					<form action="/login" method="POST">
-						<div class="form-group">
-							<label for="email">Email</label>
-							<input type="email" name="email" class="form-control">
-						</div>
-						<div class="form-group">
-							<label for="password">Password</label>
-							<input type="password" name="password" class="form-control">
-						</div>
-						<input type="submit" class="btn btn-dark btn-lg" value="Login">
-					</form>
-
-					<hr>
-					
-					<div class="text-center">
-						<p>Need an account? <a href="/signup">signup</a></p>
-						<p>Or go <a href="/">Home</a></p>
-					</div>
-				</div>
+		<% if (message.length > 0) { %>
+			<div class="alert alert-danger">
+				<%= message %>
 			</div>
+		<% } %>
+
+		<% if (succes.length > 0) { %>
+			<div class="alert alert-succes">
+				<%= succes %>
+			</div>
+		<% } %>
+
+		<form action="/login" method="POST">
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input type="email" name="email" class="form-control">
+			</div>
+			<div class="form-group mt-3">
+				<label for="password">Password</label>
+				<input type="password" name="password" class="form-control">
+				<a href="/getpassword">
+					<small class="form-text">
+						¿Olvidaste tu contraseña?
+					</small>
+				</a>
+			</div>
+			<div class="form-group text-right">
+				<input type="submit" class="btn btn-dark btn-lg" value="Iniciar sesión">
+			</div>
+		</form>
+
+		<hr>
+				
+		<div class="text-center">
+			<p>¿No tienes cuenta?</p>
+			<p><a href="/signup">¡Registrate!</a></p>
 		</div>
 	</div>
+
+	<footer class="text-left">
+		© • Fes lancer • Octubre 2018 • FES Aragón • ICO
+	</footer>
 </body>
 </html>

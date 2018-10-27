@@ -1,3 +1,4 @@
+const EmailCtrl = require('./mailCtrl');
 const User = require('./models/user');
 
 module.exports = (app, passport) => {
@@ -7,7 +8,8 @@ module.exports = (app, passport) => {
 
 	app.get('/login', (req, res) => {
 		res.render('login', {
-			message: req.flash('loginMessage')
+			message: req.flash('loginMessage'),
+			succes: ''
 		});
 	});
 
@@ -28,6 +30,66 @@ module.exports = (app, passport) => {
 		failureRedirect: '/signup',
 		failureFlash: true
 	}));
+
+	app.get('/getpassword', (req, res) => {
+		res.render('getpassword', {
+            message: ""
+        });
+	});
+
+	app.post('/getpassword', EmailCtrl.sendEmail);
+
+	app.get('/changepassword', (req, res) => {
+		var code = req.query.code || '';
+		var email = req.query.email || '';
+
+		if (code != '' && email != '') {
+			res.render('changepassword', {
+            	email: email,
+            	codigo: code
+        	});
+		} else {
+			res.render('getpassword', {
+            	message: ""
+        	});
+		}
+	});
+
+	app.post('/changepassword', (req, res) => {
+		var code = req.body.codigo;
+		var email = req.body.email;
+		var password = req.body.password;
+
+		User.findOne({'info.email': email, 'info.tokenPass': code}, function(err, user) {
+		    if (err) {
+			   	return err;
+			}
+		    if (user) {
+		    	var upUser = new User();
+		    	var passhash = upUser.generateHash(password);
+		    	User.updateOne(
+				  {
+				  	'info.email' : email,
+				  	'info.tokenPass' : code
+				  },
+				  {
+				  	$set: {
+				  		'info.password' : passhash,
+				  		'info.tokenPass' : ''
+				  	}
+				  }
+				).then((rawResponse) => {
+					res.render('login', {
+						succes: 'La contraseña se ha cambiado satisfactoriamente, ahora puede iniciar sesión con su nueva contraseña.',
+						message: ''
+					});
+				})
+				.catch((err) => {
+				  console.log(err);
+				});
+			}
+		});
+	});
 
 	app.get('/profile', isLoggedIn, (req, res) => {
 		res.render('profile', {

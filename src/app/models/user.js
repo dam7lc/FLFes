@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
 		img: String,
 		tel: String,
 		habilidades: [String],
+		tokenPass: String
 	}
 });
 

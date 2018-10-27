@@ -1,13 +1,82 @@
-.login {
-	background: #56ab2f;
-	background: -webkit-linear-gradient(to right, #a8e063, #56ab2f);
-	background: linear-gradient(to right, #a8e063, #56ab2f);
+#index, #login, #signup, #getpassword {
+    background: url('../IMG/background.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
-.signup {
-	background: #000428;
-	background: -webkit-linear-gradient(to right, #004e92, #000428);
-	background: linear-gradient(to right, #004e92, #000428);
+#index header {
+    padding: 10px 0;
+}
+
+#index, #login, #signup, #getpassword {
+    font-family: 'Mali', cursive;
+    color: #fff;
+}
+
+#index .btn {
+    border: 1px solid #e9e9e9;
+    color: #fff;
+    font-family: 'Mali', cursive;
+}
+
+#index .btn:hover {
+    background: #E2E6EA;
+    color: #000;
+}
+
+#index h1 {
+    margin-bottom: 150px;
+}
+
+#index .frase {
+    margin-top: 200px;
+}
+
+#login small {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+#login header, #signup header {
+    padding: 20px;
+}
+
+#login h1, #signup h1 {
+    margin: 10px 0 80px 0;
+}
+
+#login label, #signup label {
+    font-size: 20px;
+}
+
+#login input[type="text"], #signup input[type="text"] {
+    background: rgba(0,0,0,0.5);
+}
+
+#login a, #signup a {
+    color: #fff;
+}
+
+#signup .recuperar {
+    color: #721C24;
+}
+
+#signup .recuperar:hover {
+    color: #D03106;
+}
+
+footer {
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    font-family: Times New Roman;
+    font-size: 15px;
+    position: fixed;
+    bottom: 0;
+    z-index: 10;
+    padding: 0 10px;
+    color: rgba(255,255,255,0.7);
 }
 
 .home {

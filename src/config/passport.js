@@ -25,7 +25,7 @@ module.exports = function (passport) {
 				return done(err);
 			}
 			if (user) {
-				return done(null, false, req.flash('signupMessage', 'The email is already taken.'));
+				return done(null, false, req.flash('signupMessage', 'El email que quieres registrar ya se encuentra en uso.'));
 			} else {
 				var newUser = new User();
 				newUser.info.email = email;
@@ -52,11 +52,11 @@ module.exports = function (passport) {
 				return done(err);
 			}
 			if (!user) {
-				return done(null, false, req.flash('loginMessage', 'No user found.'));
+				return done(null, false, req.flash('loginMessage', 'Usuario no encontrado.'));
 			} 
 
 			if (!user.validatePassword(password)) {
-				return done(null, false, req.flash('loginMessage', 'Wrong password'));
+				return done(null, false, req.flash('loginMessage', 'Contraseña invalida'));
 			}
 
 			return done(null, user);
