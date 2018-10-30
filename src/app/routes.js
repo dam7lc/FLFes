@@ -25,11 +25,14 @@ module.exports = (app, passport) => {
 		});
 	});
 
-	app.post('/signup', passport.authenticate('local-signup', {
-		successRedirect: '/profile',
-		failureRedirect: '/signup',
-		failureFlash: true
-	}));
+	app.post('/signup', passport.authenticate ('local-signup', {
+    	failureRedirect: '/signup',
+    	failureFlash: true
+   	}), (req, res) => {	
+		res.render('dataRegister', {
+			user: req.user
+		});
+   	});
 
 	app.get('/getpassword', (req, res) => {
 		res.render('getpassword', {
@@ -43,7 +46,7 @@ module.exports = (app, passport) => {
 		var code = req.query.code || '';
 		var email = req.query.email || '';
 
-		if (code != '' && email != '') {
+		if (code != '') {
 			res.render('changepassword', {
             	email: email,
             	codigo: code
@@ -91,6 +94,64 @@ module.exports = (app, passport) => {
 		});
 	});
 
+	app.get('/dataRegister', (req, res) => {
+		res.render('dataRegister', {
+            message: ""
+        });
+	});
+
+	app.post('/dataRegister', (req, res) => {
+		var img = req.files.img;
+	    var id = req.user._id;
+	    var path = `./src/public/IMGUS/${id}.jpg`;
+	    var imgbdPath = '/IMGUS/' + id + '.jpg';
+		var email = req.body.email;
+	    var nombre = req.body.nombre;
+	    var ncuenta = req.body.ncuenta;
+	    var sexo = req.body.sexo;
+	    var tel = req.body.tel;
+	    var carrera = req.body.carrera;
+	    var semestre = req.body.semestre;
+	    var grupo = req.body.grupo;
+	    var turno = req.body.turno;
+
+	    img.mv(path, err => {
+	        if(err) {
+	        	return res.status(500).send({ message : err })
+	        } else {
+			    User.updateOne(
+			   		{
+					  	'_id' : id,
+					  	'info.email' : email
+					},
+					{
+					 	$set: {
+					  		'info.img' : imgbdPath,
+					  		'info.nombre' : nombre,
+					  		'info.ncuenta' : ncuenta,
+					  		'info.sexo' : sexo,
+					  		'info.tel' : tel,
+					  		'info.carrera' : carrera,
+					  		'info.semestre' : semestre,
+					  		'info.grupo' : grupo,
+					  		'info.turno' : turno
+					  	},
+					  	$push: {
+					  		'info.habilidades' : {
+					  			$each: 
+					  				JSON.parse(req.body.habilid)
+					  		}
+					  	}
+					}
+				).then((rawResponse) => {
+					res.redirect('/profile');
+				}).catch((err) => {
+					console.log(err);
+				});
+			}
+	    });
+	});
+
 	app.get('/profile', isLoggedIn, (req, res) => {
 		res.render('profile', {
 			user: req.user
@@ -131,9 +192,7 @@ module.exports = (app, passport) => {
 				  	}
 				  }
 				).then((rawResponse) => {
-					res.render('settings', {
-						user: req.user
-					});
+					res.redirect('/settings');
 				})
 				.catch((err) => {
 				  console.log(err);
@@ -161,9 +220,7 @@ module.exports = (app, passport) => {
 					  	}
 					}
 				).then((rawResponse) => {
-					res.render('settings', {
-						user: req.user
-					});
+					res.redirect('/settings');
 				}).catch((err) => {
 					console.log(err);
 				});

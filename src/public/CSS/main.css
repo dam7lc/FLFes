@@ -1,4 +1,4 @@
-#index, #login, #signup, #getpassword {
+#index, #login, #signup, #getpassword, #registro {
     background: url('../IMG/background.jpg');
     background-position: center;
     background-size: cover;
@@ -10,7 +10,7 @@
     padding: 10px 0;
 }
 
-#index, #login, #signup, #getpassword {
+#index, #login, #signup, #getpassword, #registro {
     font-family: 'Mali', cursive;
     color: #fff;
 }
@@ -43,7 +43,11 @@
     padding: 20px;
 }
 
-#login h1, #signup h1 {
+#login h1 {
+    margin: 10px 0 50px 0;
+}
+
+#signup h1 {
     margin: 10px 0 80px 0;
 }
 
@@ -79,6 +83,11 @@ footer {
     color: rgba(255,255,255,0.7);
 }
 
+#registro footer {
+    position: relative;
+    margin-top: 50px;
+}
+
 .home {
     background: #1A2980;
     background: -webkit-linear-gradient(to right, #26D0CE, #1A2980);
@@ -106,3 +115,51 @@ footer {
 #info {
 	margin-bottom: 10px;
 }
+
+#habilidades {
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 5px;
+    background: rgba(0,0,0,0.5);
+    margin: 15px 0;
+}
+
+.listaHabilidades {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    list-style: none;
+    color: #fff;
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.listaHabilidades li {
+    padding: 0px 10px;
+    border-radius: 5px;
+    border: 1px solid orange;
+    margin: 0 10px 10px 0;
+    font-size: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.listaHabilidades p {
+    color: orange;
+    text-decoration: none;
+    font-size: 23px;
+    margin: -5px 5px 0 0;
+    transition: ease all 0.25s;
+}
+
+.listaHabilidades p:hover {
+    color: #fff;
+    cursor: pointer;
+}
+
+

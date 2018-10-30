@@ -47,10 +47,27 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-body">
-          <h3 class="card-title"><span class="fa fa-user"></span> User data</h3>
+          <h3 class="card-title"><span class="fa fa-user"></span> ¡Bienvenido <%= user.info.nombre %>!</h3>
+          <img src='<%= user.info.img %>' alt="My_perfil" style="width: 100px; border-radius: 50%; margin: 20px 100px;">
           <p>
-            <strong>Principal Email: </strong> <%= user.info.email %> <br>
+            <strong>Email: </strong> <%= user.info.email %> <br>
           </p>
+          <p>
+            <strong>Carrera: </strong> <%= user.info.carrera %> <br>
+          </p>
+          <p>
+            <strong>Número de cuenta UNAM: </strong> <%= user.info.ncuenta %> <br>
+          </p>
+          <p>
+            <strong>Tus habilidades: </strong> <br>
+          </p>
+          <ul>
+            <% var i = 0; 
+               var long = user.info.habilidades.length; 
+               for (i = 0; i < long; i++){ %>
+              <li><%= user.info.habilidades[i] %></li>    
+            <% } %>
+          </ul>
           <a href="/logout" class="btn btn-outline-danger my-2 my-sm-0">Logout</a>
         </div>
       </div>

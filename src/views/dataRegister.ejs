@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Registro de datos</title>
+	<% include partials/head %>
+</head>
+<body id="registro">
+	<div class="container">
+		<h2 class="text-center mt-5">
+			¡Estás a un paso de ser parte de Fes Lancer!
+		</h2>
+
+		<form action="/dataRegister" method="POST" enctype="multipart/form-data" class="mt-4">
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<label for="nombre">Nombre</label>
+					<input type="text" name="nombre" id="nombre" class="form-control" required>
+			    </div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group col-md-2">
+			    	<label for="ncuenta">No. de cuenta UNAM</label>
+			    	<input type="text" name="ncuenta" class="form-control" required>
+			    </div>
+
+				<div class="form-group col-md-2 offset-md-1">
+					<label for="sexo">Sexo</label>
+					<select name="sexo" class="form-control" required>
+						<option value="" selected>Selecciona uno:</option>
+						<option value="Hombre">Hombre</option>
+						<option value="Mujer">Mujer</option>
+						<option value="Otro">Otro</option>
+						<option value="No decirlo">Prefiero no decirlo</option>
+					</select>
+				</div>
+
+				<div class="form-group col-md-2 offset-md-1">
+					<label for="tel">Teléfono de contacto</label>
+					<input type="text" name="tel" class="form-control" required>
+				</div>
+			</div>
+
+			<div class="form-row">
+			    <div class="form-group col-md-12">
+					<label for="carrera">Carrera</label>
+					<select name="carrera" class="form-control" required>
+		              	<option value="" selected>Elegir una carrera...</option>
+		              	<option value="Arquitectura">Arquitectura</option>
+		              	<option value="Comunicacion y periodismo">Comunicación y periodismo</option>
+		              	<option value="Derecho">Derecho</option>
+		              	<option value="Diseño industrial">Diseño industrial</option>
+		              	<option value="Economía">Economía</option>
+		              	<option value="Ingeniería Civil">Ingeniería Civil</option>
+		              	<option value="Ingeniería Electrica Electrónica">Ingeniería Electrica Electrónica</option>
+		              	<option value="Ingeniería en Computación">Ingeniería en Computación</option>
+		              	<option value="Ingeniería Industrial">Ingeniería Industrial</option>
+		              	<option value="Ingeniería Mecánica">Ingeniería Mecánica</option>
+		              	<option value="Pedagogía">Pedagogía</option>
+		              	<option value="Planificación para el Desarrollo Agropecuario">Planificación para el Desarrollo Agropecuario</option>
+		              	<option value="Relaciones Internacionales">Relaciones Internacionales</option>
+		              	<option value="Sociología">Sociología</option>
+		            </select>
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group col-md-2">
+					<label for="semestre">Semestre actual</label>
+					<select name="semestre" class="form-control" required>
+						<option value="" selected>Selecciona uno:</option>
+						<option value="2018_01">2018_01</option>
+						<option value="2018_02">2018_02</option>
+					</select>
+				</div>
+
+				<div class="form-group col-md-2 offset-md-1">
+					<label for="grupo">Grupo</label>
+					<select name="grupo" class="form-control" required>
+						<option value="" selected>Selecciona uno:</option>
+						<option value="1158">1158</option>
+						<option value="1159">1159</option>
+					</select>
+				</div>
+
+				<div class="form-group col-md-2 offset-md-1">
+					<label for="turno">Turno</label>
+					<select name="turno" class="form-control" required>
+						<option value="" selected>Selecciona uno:</option>
+						<option value="Matutino">Matutino</option>
+						<option value="Vespertino">Vespertino</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group col-md-3">
+					<label for="habilidad">Habilidades</label>
+
+					<input type="text" id="habilidad" name="habilidad" onkeyup="minus(this);" class="form-control">
+				</div>
+
+				<div class="form-group col-md-1">
+					<label>.</label>
+					<button id="btnA" class="btn btn-dark">Añadir</button>
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<div id="habilidades">
+					</div>
+				</div>
+			</div>
+
+			<div class="form-row">
+				<input type="hidden" name="email" value='<%= user.info.email %>'>
+				<input type="hidden" name="habilid" id="habilid" value="">
+
+				<div class="form-group col-md-6">
+				    <label for="img" class="subir">
+				       	<i class="fa fa-cloud-upload-alt"></i> Elegir una imagen...
+				    </label>
+
+				    <input type="file" name="img" id="img" onchange="cambiar()" class="imgProfileFile" required>
+
+				    <div id="info"></div>
+				</div>
+
+				<div class="form-group col-md-6 text-right">
+					<input type="submit" class="btn btn-dark btn-lg" value="Siguiente">
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<footer class="text-left">
+		© • Fes lancer • Octubre 2018 • FES Aragón • ICO
+	</footer>
+
+	<% include partials/librarys %>
+	<script>
+		function cambiar(){
+	    	var pdrs = document.getElementById('img').files[0].name;
+	        document.getElementById('info').innerHTML = pdrs;
+	    }
+
+		var habilidades = [];
+
+		$(document).ready(function() {
+			$("#nombre").focus();
+		});
+
+		//Agregar elemento al array por botón
+		$("#btnA").click(function(e) {
+			e.preventDefault();
+			var habilidad = $("#habilidad").val();
+			habilidad = mayusPL(habilidad);
+
+			if (habilidad != "") {
+				var buscar = habilidades.indexOf(habilidad);
+
+				if (buscar >= 0) {
+					alert("Ya has elegido ésta habilidad.");
+				} else {
+					habilidades.push(habilidad);
+					var a = JSON.stringify(habilidades);
+					$("#habilid").val(a);
+					imprimir();
+				}
+			}
+		});
+
+		//Agregar elemento al array por tecla enter
+		$(document).keypress(function(e) {
+			var Caracter = String.fromCharCode(e.which);
+			if (e.which == 13) {
+				e.preventDefault();
+		    	var habilidad = $("#habilidad").val();
+		    	habilidad = mayusPL(habilidad);
+
+				if (habilidad != "") {
+					var buscar = habilidades.indexOf(habilidad);
+
+					if (buscar >= 0) {
+						alert("Ya has elegido ésta habilidad.");
+					} else {
+						habilidades.push(habilidad);
+						var a = JSON.stringify(habilidades);
+						$("#habilid").val(a);
+						imprimir();
+					}
+				}
+		    } 
+		});
+
+		//Funcion para convertir a minusculas las letras
+		function minus(e) {
+			e.value = e.value.toLowerCase();
+		}
+
+		//Función para convertir cada letra de cada palabra en mayúscula
+		function mayusPL(oracion){
+        	return oracion.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1){
+           		return $1.toUpperCase(); 
+        	});
+    	}
+
+		//Función para borrar el elemento del array habilidades
+		function clickeado(e){
+			if (e.id == 0) habilidades.splice(0,1);
+			else habilidades.splice(e.id, e.id);
+			imprimir();
+		}
+
+		//Funcion para recorrer el array habilidades y mostrarlo elemento a elemento.
+		function imprimir() {
+			$("#habilidades").empty();
+
+			var longitudA = habilidades.length;
+			var impresion = "";
+			var i = 0;
+
+			for (i = 0; i < longitudA; i++) {
+				impresion += " <li><p onclick='clickeado(this);' id="+ i + ">x</p> " + habilidades[i] + "</li>";
+			}
+
+			$("#habilidades").append("<ul class='listaHabilidades'>" + impresion + "</ul>");
+			reset();
+		}
+
+		//Funcion para borrar el contenido del input habilidad y ponerlo en foco.
+		function reset() {
+			$("#habilidad").val('');
+			$("#habilidad").focus();
+		}
+	</script>
+
+</body>
+</html>
