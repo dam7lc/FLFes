@@ -14,7 +14,7 @@ module.exports = (app, passport) => {
 	});
 
 	app.post('/login', passport.authenticate('local-login', {
-		successRedirect: '/profile',
+		successRedirect: '/dashboard',
 		failureRedirect: '/login',
 		failureFlash: true
 	}));
@@ -144,7 +144,7 @@ module.exports = (app, passport) => {
 					  	}
 					}
 				).then((rawResponse) => {
-					res.redirect('/profile');
+					res.redirect('/dashboard');
 				}).catch((err) => {
 					console.log(err);
 				});
@@ -165,6 +165,12 @@ module.exports = (app, passport) => {
 
 	app.get('/settings', isLoggedIn, (req, res) => {
 		res.render('settings', {
+			user: req.user
+		});
+	});
+
+	app.get('/dashboard', isLoggedIn, (req, res) => {
+		res.render('dashboard', {
 			user: req.user
 		});
 	});

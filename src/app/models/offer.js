@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const offerSchema = new mongoose.Schema({
+	email: String,
+	nombre: String,
+	fechaPub: String,
+	fechaVenc: String,
 	titulo: String,
 	materia: String,
 	de: String,
