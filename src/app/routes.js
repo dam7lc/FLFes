@@ -1,5 +1,6 @@
 const EmailCtrl = require('./mailCtrl');
 const User = require('./models/user');
+const Offer = require('./models/offer');
 
 module.exports = (app, passport) => {
 	app.get('/', (req, res) => {
@@ -14,10 +15,17 @@ module.exports = (app, passport) => {
 	});
 
 	app.post('/login', passport.authenticate('local-login', {
-		successRedirect: '/dashboard',
 		failureRedirect: '/login',
 		failureFlash: true
-	}));
+	}), async (req, res) => {
+
+		const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
+
+		res.render('dashboard', {
+			offers, // offers = offers,
+			user: req.user
+		});
+   	});
 
 	app.get('/signup', (req, res) => {
 		res.render('signup', {
@@ -28,8 +36,12 @@ module.exports = (app, passport) => {
 	app.post('/signup', passport.authenticate ('local-signup', {
     	failureRedirect: '/signup',
     	failureFlash: true
-   	}), (req, res) => {	
+   	}), async (req, res) => {
+
+		const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
+
 		res.render('dataRegister', {
+			offers, // offers = offers,
 			user: req.user
 		});
    	});
@@ -169,10 +181,57 @@ module.exports = (app, passport) => {
 		});
 	});
 
-	app.get('/dashboard', isLoggedIn, (req, res) => {
+	app.get('/dashboard', isLoggedIn, async (req, res) => {
+
+		const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
+
 		res.render('dashboard', {
+			offers, // offers = offers,
 			user: req.user
 		});
+	});
+
+	app.get('/publicProyect', isLoggedIn, (req, res) => {
+		res.render('publicProyect', {
+			user: req.user
+		});
+	});
+
+	app.post('/publicProyect', async (req, res) => {
+		var email = req.body.email;
+		var nombre = req.body.nombre;
+		var titulo = req.body.titulo;
+	    var materia = req.body.materia;
+	    var descripcion = req.body.descripcion;
+	    var plazo = req.body.plazo;
+	    var urgencia = req.body.urgencia;
+	    var fecha = req.body.fecha;
+	    var hora = req.body.hora;
+
+	    const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
+
+	    var newOffer = new Offer();
+			newOffer.email = email;
+			newOffer.nombre = nombre;
+			newOffer.titulo = titulo;
+			newOffer.materia = materia;
+			newOffer.descripcion = descripcion;
+			newOffer.plazo = plazo;
+			newOffer.urgencia = urgencia;
+			newOffer.fechaPublicacion = fecha;
+			newOffer.horaPublicacion = hora;
+			newOffer.habilidades = JSON.parse(req.body.habilid);
+
+			newOffer.save(function(err) {
+				if (err) {
+					throw err;
+				}
+
+				res.render('dashboard', {
+					offers,
+					user: req.user
+				});
+			});
 	});
 
 	app.post('/uploadpi', (req, res) => {
@@ -238,6 +297,6 @@ module.exports = (app, passport) => {
 		if (req.isAuthenticated()) {
 			return next();
 		}
-		return res.redirect('/');
+		return res.redirect('/login');
 	}
 };

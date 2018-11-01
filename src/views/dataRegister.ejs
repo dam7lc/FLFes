@@ -96,13 +96,13 @@
 
 			<div class="form-row">
 				<div class="form-group col-md-3">
-					<label for="habilidad">Habilidades</label>
+					<label for="habilidad">Añade habilidades de lo que sabes</label>
 
 					<input type="text" id="habilidad" name="habilidad" onkeyup="minus(this);" class="form-control">
 				</div>
 
 				<div class="form-group col-md-1">
-					<label>.</label>
+					<label class="text-muted">.</label><br>
 					<button id="btnA" class="btn btn-dark">Añadir</button>
 				</div>
 			</div>
@@ -165,8 +165,6 @@
 					alert("Ya has elegido ésta habilidad.");
 				} else {
 					habilidades.push(habilidad);
-					var a = JSON.stringify(habilidades);
-					$("#habilid").val(a);
 					imprimir();
 				}
 			}
@@ -187,8 +185,6 @@
 						alert("Ya has elegido ésta habilidad.");
 					} else {
 						habilidades.push(habilidad);
-						var a = JSON.stringify(habilidades);
-						$("#habilid").val(a);
 						imprimir();
 					}
 				}
@@ -216,6 +212,8 @@
 
 		//Funcion para recorrer el array habilidades y mostrarlo elemento a elemento.
 		function imprimir() {
+			var a = JSON.stringify(habilidades);
+			$("#habilid").val(a);
 			$("#habilidades").empty();
 
 			var longitudA = habilidades.length;

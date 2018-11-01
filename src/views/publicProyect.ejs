@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Publicando proyecto</title>
+  <% include partials/head %>
+</head>
+<body id="public">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/dashboard">FES LANCER</a>
+        
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/dashboard">Tablero</a>
+        </li>
+
+        <li class="nav-item active">
+          <a class="nav-link" href="/publicProyect">Necesito un asesor</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Perfil
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/profile">Mi perfil</a>
+            <a class="dropdown-item" href="/settings">Configuraciones</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/privacy">Privacidad</a>
+          </div>
+        </li>
+      </ul>
+
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+      </form>
+
+      <a href="/logout" class="btn btn-outline-danger my-2 my-sm-0 ml-2">Salir</a>
+    </div>
+  </nav>
+
+  <div class="container mt-5 pt-4 mb-5 text-white">
+    <h2 class="text-center mb-4">¡Pide ayuda en solo unos cuantos minutos!</h2>
+    <form action="/publicProyect" method="POST">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="titulo">Titulo del proyecto</label>
+          <input type="text" class="form-control" name="titulo" required>
+          <small class="form-text">Recomendados: "Ayuda con mi proyecto de química", "Programación de un código en C", etc.</small>
+        </div>
+        
+        <div class="form-group col-md-6">
+          <label for="materia">Materia Principal</label>
+          <input type="text" class="form-control" name="materia" required>
+          <small id="materia" class="form-text">Recomendadas: "Química", "Programación", "Historia", "Matemáticas", "Literatura", etc.</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción del proyecto</label>
+        <textarea name="descripcion" class="form-control" placeholder="Describe en tus palabras de que trata tu proyecto para que otras personas puedan conocerlo y ayudarte a completarlo. Ejemplo: Necesito que me enseñen cónicas para geometría analítica, en especial el tema de parábola y que me ayuden con unos ejercicios." required style="min-height: 100px; max-height: 300px;"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="plazo">Plazo de ofertas</label>
+          <input type="number" class="form-control" name="plazo" aria-describedby="plazo" required>
+          <small id="plazo" class="form-text">¿Cuantos días esperarás la ayuda?</small>
+        </div>
+        
+        <div class="form-group col-md-5 offset-md-1">
+          <label for="urgencia">Urgencia de proyecto</label>
+          <select name="urgencia" class="form-control" required>
+            <option value="" selected>¿Qué tan laborioso es tu proyecto?</option>
+            <option value="Menos de 1 día">Menos de 1 día (Muy poco)</option>
+            <option value="De 1 a 3 días">De 1 - 3 días (Poco)</option>
+            <option value="De 3 a 5 días">De 3 - 5 días (Un tanto laborioso)</option>
+            <option value="De 5 a 10 días">De 5 - 10 días (Muy laborioso)</option>
+            <option value="Más de 10 días">Más de 10 días (Requiero un equipo)</option>
+            <option value="No estoy seguro">No estoy seguro</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group col-md-5">
+          <label for="habilidad">Habilidades a tener para que te ayuden con tu proyecto</label>
+
+          <input type="text" class="form-control" id="habilidad" name="habilidad" onkeyup="minus(this);">
+
+          <small class="form-text">Puedes poner hasta 5 habilidades.</small>
+        </div>
+
+        <div class="form-group col-md-1">
+          <label class="text-muted">.</label><br>
+          <button id="btnA" class="btn btn-dark">Añadir</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <div id="habilidades">
+          </div>
+        </div>
+        <input type="hidden" name="email" value='<%= user.info.email %>'>
+        <input type="hidden" name="nombre" value='<%= user.info.nombre %>'>
+        <input type="hidden" name="fecha" id ="fecha">
+        <input type="hidden" name="hora" id ="hora">
+        <input type="hidden" name="habilid" id="habilid" value=''>
+      </div>
+
+      <div class="text-right">
+        <button type="submit" class="btn btn-success mb-5 mt-4">Pedir Ayuda</button>
+      </div>
+    </form>
+  </div>
+  
+  <% include partials/librarys %>
+  <script>
+    var habilidades = [];
+
+    $(document).ready(function() {
+      $("#nombre").focus();
+    });
+
+    //Agregar elemento al array por botón
+    $("#btnA").click(function(e) {
+      e.preventDefault();
+      agregar();
+    });
+
+    //Agregar elemento al array por tecla enter
+    $(document).keypress(function(e) {
+      var Caracter = String.fromCharCode(e.which);
+      if (e.which == 13) {
+        e.preventDefault();
+        agregar();  
+      } 
+    });
+
+    //Función de agregado a array habilidades
+    function agregar() {
+      var habilidad = $("#habilidad").val();
+      habilidad = mayusPL(habilidad);
+
+      if (habilidad != "") {
+        var buscar = habilidades.indexOf(habilidad);
+
+        if (buscar >= 0) {
+          alert("Ya has elegido ésta habilidad.");
+        } else {
+          habilidades.push(habilidad);
+          imprimir();
+        }
+      }
+    }
+
+    //Funcion para convertir a minusculas las letras
+    function minus(e) {
+      e.value = e.value.toLowerCase();
+    }
+
+    //Función para convertir cada letra de cada palabra en mayúscula
+    function mayusPL(oracion){
+          return oracion.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1){
+              return $1.toUpperCase(); 
+          });
+      }
+
+    //Función para borrar el elemento del array habilidades
+    function clickeado(e){
+      if (e.id == 0) habilidades.splice(0,1);
+      else habilidades.splice(e.id, e.id);
+      imprimir();
+    }
+
+    //Funcion para recorrer el array habilidades y mostrarlo elemento a elemento.
+    function imprimir() {
+      var a = JSON.stringify(habilidades);
+      $("#habilid").val(a);
+      $("#habilidades").empty();
+
+      var longitudA = habilidades.length;
+      var impresion = "";
+      var i = 0;
+
+      for (i = 0; i < longitudA; i++) {
+        impresion += " <li><p onclick='clickeado(this);' id="+ i + ">x</p> " + habilidades[i] + "</li>";
+      }
+
+      $("#habilidades").append("<ul class='listaHabilidades'>" + impresion + "</ul>");
+
+      if (habilidades.length >= 5) {
+        $("#habilidad").attr('disabled','true');
+      } else {
+        $("#habilidad").removeAttr('disabled');
+      }
+
+      reset();
+      fecha();
+    }
+
+    //Funcion para borrar el contenido del input habilidad y ponerlo en foco.
+    function reset() {
+      $("#habilidad").val('');
+      $("#habilidad").focus();
+    }
+
+    function fecha() {
+      var d = new Date();
+      var mes = (d.getMonth()*1) + 1;
+      var dia = d.getDate();
+      var ano = d.getFullYear();
+      var hora = d.getHours();
+      var minutos = d.getMinutes();
+      var segundos = d.getSeconds();
+
+      if (dia < 10 ) {dia = '0' + dia;}
+      if (mes < 10 ) {mes = '0' + mes;}
+      if (hora < 10 ) {hora = '0' + hora;}
+      if (minutos < 10 ) {minutos = '0' + minutos;}
+      if (segundos < 10 ) {segundos = '0' + segundos;}
+
+      var fecha = dia + '/' + mes + '/' + ano;
+      var hora = hora + ':' + minutos + ':' + segundos;
+
+      $("#fecha").val(fecha);
+      $("#hora").val(hora);
+    }
+  </script>
+
+</body>
+</html>
