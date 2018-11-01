@@ -45,8 +45,8 @@
     </div>
   </nav>
 
-    <div style="width: 100%; display: flex; flex-direction: row;">
-      <div class="card mt-5 ml-5" style="width: 17rem; max-height: 550px;">
+  <div style="width: 100%; display: flex; flex-direction: row;">
+      <div class="card mt-5 ml-5 mb-5" style="width: 17rem; max-height: 1000px;">
         <img class="card-img-top mt-4" src="<%= user.info.img %>" alt="Mi foto" style="width: 50%; border-radius: 50%; margin: 0 auto; border: 1px solid green;">
         <div class="card-body">
           <h5 class="card-title"><%= user.info.nombre %></h5>
@@ -64,21 +64,26 @@
       </div>
       
       <div class="container bg-white mt-5 mb-5" style="width: 60rem; border: 1px solid #DFDFDF; padding: 0px;">
+
+        <% if (message.length > 0) { %>
+          <div class="alert text-info">
+            <%= message %>
+          </div>
+        <% } %>
         
         <% for (var i = 0; i < offers.length; i++) {%>
-          <div class="card cardProyect">
-            <div class="card-body">
-              <div class="card-header">
-                <div class="row mt-1">
-                  <h5 class="card-title col-md-5"><%= offers[i].titulo %></h5>
-                  <h6 class="card-text text-dark col-md-4 mt-1"><%= offers[i].fechaPublicacion %> <%= offers[i].horaPublicacion %></h6>
-                  <h6 class="card-text text-success col-md-3 mt-1">Tiempo restante: <strong>1</strong> día</h6>
-                </div>
+          <div class="card cardProyect mb-4 border-dark">
+            <div class="card-header">
+              <div class="row mt-1">
+                <h5 class="card-title col-md-5"><%= offers[i].titulo %></h5>
+                <h6 class="card-text text-dark col-md-4 mt-1"><%= offers[i].fechaPublicacion %> <%= offers[i].horaPublicacion %></h6>
+                <h6 class="card-text text-success col-md-3 mt-1">Tiempo restante: <strong><%= offers[i].plazo %></strong> día</h6>
               </div>
-              <h6 class="card-subtitle mb-2 mt-3 text-muted"><%= offers[i].materia %></h6>
-              <p class="card-text"><strong>Descripción: </strong><%= offers[i].descripcion %></p>
-              <p class="card-text"><strong>Plazo de espera: </strong><%= offers[i].plazo %> días</p>
-              <p class="card-text"><strong>Duración: </strong><%= offers[i].urgencia %></p>
+              <h6 class="card-subtitle mb-2 text-info"><%= offers[i].materia %></h6>
+            </div>
+            <div class="card-body">
+              <p class="card-text"><i><%= offers[i].descripcion %></i></p>
+              <p class="card-text"><strong>Duración:</strong> <i><%= offers[i].urgencia %></i></p>
               <div class="btnAndHabilidadesCard">
                 <ul class="habilidadesCardR">
                   <%
@@ -90,10 +95,17 @@
                 <a href="/seeProyect" class="btn btn-info">Ayudar</a>
               </div>
             </div>
+            <div class="card-footer">
+              <div class="row mt-1">
+                <h6 class="card-text text-dark col-md-4 mt-1 text-muted">Solicitante: <%= offers[i].nombre %></h6>
+                <h6 class="card-tex  text-dark col-md-4 mt-1 text-muted">Grupo: <%= offers[i].grupo %></h6>
+                <h6 class="card-text text-dark col-md-4 mt-1 text-muted">Semestre: <%= offers[i].semestre %></h6>
+              </div>
+            </div>
           </div>
         <% } %>
       </div>
-    </div>
+  </div>
   
   <% include partials/librarys %>
 

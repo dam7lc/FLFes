@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const offerSchema = new mongoose.Schema({
 	email: String,
 	nombre: String,
+	grupo: String,
+	semestre: String,
 	titulo: String,
 	materia: String,
 	descripcion: String,

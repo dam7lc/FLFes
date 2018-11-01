@@ -15,17 +15,10 @@ module.exports = (app, passport) => {
 	});
 
 	app.post('/login', passport.authenticate('local-login', {
+		successRedirect: '/dashboard',
 		failureRedirect: '/login',
 		failureFlash: true
-	}), async (req, res) => {
-
-		const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
-
-		res.render('dashboard', {
-			offers, // offers = offers,
-			user: req.user
-		});
-   	});
+	}));
 
 	app.get('/signup', (req, res) => {
 		res.render('signup', {
@@ -34,17 +27,10 @@ module.exports = (app, passport) => {
 	});
 
 	app.post('/signup', passport.authenticate ('local-signup', {
+		successRedirect: '/dataRegister',
     	failureRedirect: '/signup',
     	failureFlash: true
-   	}), async (req, res) => {
-
-		const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
-
-		res.render('dataRegister', {
-			offers, // offers = offers,
-			user: req.user
-		});
-   	});
+   	}));
 
 	app.get('/getpassword', (req, res) => {
 		res.render('getpassword', {
@@ -108,7 +94,8 @@ module.exports = (app, passport) => {
 
 	app.get('/dataRegister', (req, res) => {
 		res.render('dataRegister', {
-            message: ""
+            message: "",
+            user: req.user
         });
 	});
 
@@ -182,11 +169,17 @@ module.exports = (app, passport) => {
 	});
 
 	app.get('/dashboard', isLoggedIn, async (req, res) => {
-
 		const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
 
+		var contenido = "";
+
+		if (offers.length == 0) {
+			contenido += "No Nay ofertas en éste momento";
+		}
+
 		res.render('dashboard', {
-			offers, // offers = offers,
+			message: contenido,
+			offers,
 			user: req.user
 		});
 	});
@@ -213,6 +206,8 @@ module.exports = (app, passport) => {
 	    var newOffer = new Offer();
 			newOffer.email = email;
 			newOffer.nombre = nombre;
+			newOffer.grupo = req.user.info.grupo;
+			newOffer.semestre = req.user.info.semestre;
 			newOffer.titulo = titulo;
 			newOffer.materia = materia;
 			newOffer.descripcion = descripcion;
@@ -227,10 +222,7 @@ module.exports = (app, passport) => {
 					throw err;
 				}
 
-				res.render('dashboard', {
-					offers,
-					user: req.user
-				});
+				res.redirect('/dashboard');
 			});
 	});
 
