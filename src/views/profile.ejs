@@ -45,35 +45,127 @@
     </div>
   </nav>
 
-  <div class="container mt-5">
-    <div class="col-sm-12">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title"><span class="fa fa-user"></span> ¡Bienvenido <%= user.info.nombre %>!</h3>
-          <img src='<%= user.info.img %>' alt="My_perfil" style="width: 100px; border-radius: 50%; margin: 20px 100px;">
-          <p>
-            <strong>Email: </strong> <%= user.info.email %> <br>
-          </p>
-          <p>
-            <strong>Carrera: </strong> <%= user.info.carrera %> <br>
-          </p>
-          <p>
-            <strong>Número de cuenta UNAM: </strong> <%= user.info.ncuenta %> <br>
-          </p>
-          <p>
-            <strong>Tus habilidades: </strong> <br>
-          </p>
-          <ul>
-            <% var i = 0; 
-               var long = user.info.habilidades.length; 
-               for (i = 0; i < long; i++){ %>
-              <li><%= user.info.habilidades[i] %></li>    
-            <% } %>
-          </ul>
-          <a href="/logout" class="btn btn-outline-danger my-2 my-sm-0">Logout</a>
+  <div class="container mt-5 mb-5 pt-4" style="text-shadow: 1px 1px 1px #000; background: rgba(0,0,0,0.7);">
+    <h2 class="text-center text-primary">Este es tu perfil en Fes Lancer</h2>
+    <h5 class="text-center text-light">Puedes editarlo si así lo deseas</h5>
+
+    <form action="/uploadpi" method="POST" class="mt-4" enctype="multipart/form-data" style="color: #fff;">
+      <div class="form-row">
+        <div class="col-md-9">
+          <div class="form-group col-md-11">
+            <label for="nombre">Nombre</label>
+            <input type="text" name="Nombre" class="form-control" required value="<%= user.info.nombre %>">
+          </div>
+          
+          <div class="form-row pl-3">
+            <div class="form-group col-md-3">
+              <label for="ncuenta">No. de cuenta UNAM</label>
+              <input type="text" name="ncuenta" class="form-control" required value="<%= user.info.ncuenta %>">
+            </div>
+            
+            <div class="form-group col-md-2 offset-md-1">
+                <label for="sexo">Sexo</label>      
+                <select name="sexo" class="form-control" required>
+                  <option value="" selected></option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
+                  <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                </select>
+            </div>
+            
+            <div class="form-group col-md-3 offset-md-1">
+                <label for="tel">Telefono de contacto</label>      
+                <input type="text" class="form-control" name="tel" required value="<%= user.info.tel %>">
+            </div>
+          </div>
+              
+          <div class="form-group col-md-11">
+            <label for="carrera">Carrera</label>   
+            <select name="carrera" class="form-control" required>
+              <option value=""></option>
+              <option value="Arquitectura">Arquitectura</option>
+              <option value="Comunicacion y periodismo">Comunicación y periodismo</option>
+              <option value="Derecho">Derecho</option>
+              <option value="Diseño industrial">Diseño industrial</option>
+              <option value="Economía">Economía</option>
+              <option value="Ingeniería Civil">Ingeniería Civil</option>
+              <option value="Ingeniería Electrica Electrónica">Ingeniería Electrica Electrónica</option>
+              <option value="Ingeniería en Computación">Ingeniería en Computación</option>
+              <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+              <option value="Ingeniería Mecánica">Ingeniería Mecánica</option>
+              <option value="Pedagogía">Pedagogía</option>
+              <option value="Planificación para el Desarrollo Agropecuario">Planificación para el Desarrollo Agropecuario</option>
+              <option value="Relaciones Internacionales">Relaciones Internacionales</option>
+              <option value="Sociología">Sociología</option>
+            </select> 
+          </div>
+          
+          <div class="form-row pl-3">
+            <div class="form-group col-md-2">
+              <label for="semestre">Semestre actual</label>   
+              <select name="semestre" class="form-control" required>
+                <option value=""></option>
+                <option value="2018_01">2018_01</option>
+                <option value="2018_02">2018_02</option>
+              </select> 
+            </div>
+            
+            <div class="form-group col-md-2 offset-md-1">
+              <label for="grupo">Grupo</label>   
+              <select name="grupo" class="form-control" required>
+                <option value=""></option>
+                <option value="1158">1158</option>
+                <option value="1159">1159</option>
+              </select> 
+            </div>
+            
+            <div class="form-group col-md-3 offset-md-1">
+              <label for="turno">Turno</label>   
+              <select name="turno" class="form-control" required>
+                <option value=""></option>
+                <option value="Matutino">Matutino</option>
+                <option value="Vespertino">Vespertino</option>
+              </select> 
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <div class="form-group text-center">
+            <h3><%= user.info.nombre %></h3>
+            <div style="background: url(<%= user.info.img %>); background-size: cover; background-repeat: no-repeat; background-position: center; width: 150px; height: 150px; margin: auto; border-radius: 50%;" class="border border-primary mb-4 mt-3"></div>
+
+            <label for="file" class="subir">
+              <i class="fas fa-cloud-upload-alt"></i> Elegir un archivo
+            </label>
+
+            <input type="file" name="file" id="file" onchange="cambiar()" class="imgProfileFile"/>
+
+            <div id="info"></div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div class="form-row pl-3 pr-3 pt-0">
+        <div class="form-group col-md-12">
+          <div id="habilidades">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row pl-3 pt-0 pr-3 pb-0">
+        <div class="form-group col-md-4">
+          <label for="habilidad">Aumenta tus habilidades</label>
+          <input type="text" id="habilidad" name="habilidad" onkeyup="minus(this);" class="form-control">
+        </div>
+
+        <div class="form-group col-md-1">
+          <label class="text-muted">.</label><br>
+          <button id="btnA" class="btn btn-dark">Añadir</button>
+        </div>
+      </div>
+    </form>         
   </div>
 
   <% include partials/librarys %>

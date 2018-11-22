@@ -47,7 +47,7 @@
 
   <div style="width: 100%; display: flex; flex-direction: row;">
       <div class="card mt-5 ml-5 mb-5" style="width: 17rem; max-height: 1000px;">
-        <img class="card-img-top mt-4" src="<%= user.info.img %>" alt="Mi foto" style="width: 50%; border-radius: 50%; margin: 0 auto; border: 1px solid green;">
+        <div style="background: url(<%= user.info.img %>); background-size: cover; background-repeat: no-repeat; background-position: center; width: 130px; height: 130px; margin: auto; border-radius: 50%;" class="border border-primary mt-4"></div>
         <div class="card-body">
           <h5 class="card-title"><%= user.info.nombre %></h5>
           <p class="card-text"><strong>Carrera: </strong> <%= user.info.carrera %></p>
