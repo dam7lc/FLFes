@@ -7,7 +7,9 @@
     <color name="transparent">#00000000</color>
     <color name="background">#253565</color>
     <color name="textColor">#CCC</color>
+    <color name="cardBackground">#BBB</color>
     <color name="textTitle">#EEE</color>
     <color name="textMain">#A0C0D5</color>
+    <color name="textCardMate">#357</color>
     <color name="textHintColor">#999</color>
 </resources>
