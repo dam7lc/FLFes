@@ -3,8 +3,9 @@ const Offer = require('../app/models/offer')
 
 module.exports = (io) => {
 	io.on('connection', function (socket){ //Se ejecuta con un socket.on
-
+	console.log("User Connected :)");
 		socket.on('attemptLogin', function (data) { //Se ejecuta cuando se inicia sesion
+			console.log(data);
 		    var email = data['email'];
 		    var password = data['password'];
 		    User.findOne({'info.email': email}, function(err, user) {
@@ -135,7 +136,7 @@ module.exports = (io) => {
 				}
 				if(user){
 					var newOffer = new Offer();
-				    newOffer.de = user.info.nombre;
+				    newOffer.email = user.info.email;
 					newOffer.titulo = data['titulo'];
 					newOffer.materia = data['materia'];
 					newOffer.tema = data['tema'];
@@ -157,17 +158,17 @@ module.exports = (io) => {
 					console.log(err);
 					return;
 				}
-				Offer.countDocuments({'de': {"$ne": user.info.nombre}},function(err, result){
-					console.log(result);
+				Offer.countDocuments({'email': {"$ne": user.info.email}},function(err, result){
 					if(err){
 						console.log(err);
 						return;
 					}
 					if(result == 0){
 						socket.emit('populateOffersResponse', {response: 1})
+						return;
 					}
 					else{
-						Offer.find({'de': {"$ne": user.info.nombre}}, function(err, offer){
+						Offer.find({'email': {"$ne": user.info.email}}, function(err, offer){
 							if(err){
 								console.log(err);
 								return;	
@@ -177,7 +178,7 @@ module.exports = (io) => {
 									response: 0,
 									materia: offer.materia,
 									titulo: offer.titulo,
-									de: offer.de,
+									email: offer.email,
 									tema: offer.tema,
 									descripcion: offer.descripcion
 								})

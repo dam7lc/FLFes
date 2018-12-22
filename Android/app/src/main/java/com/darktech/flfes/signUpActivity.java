@@ -137,6 +137,7 @@ public class signUpActivity extends Activity {
             });
             Intent signup = new Intent(this, com.darktech.flfes.signUpProfileActivity.class);
             signup.putExtra("email", email);
+            setResult(RESULT_OK);
             startActivity(signup);
             finish();
         }

@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <Button
+                <com.darktech.flfes.CustomFontButton
                     android:id="@+id/buttonUploadImg"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
@@ -115,7 +115,7 @@
                         android:textColor="@color/textColor"
                         android:textColorHint="@color/textHintColor" />
 
-                    <Button
+                    <com.darktech.flfes.CustomFontButton
                         android:id="@+id/buttonAddHabs"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
@@ -124,7 +124,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <Button
+            <com.darktech.flfes.CustomFontButton
                 android:id="@+id/buttonProfileNext"
                 android:layout_width="70dp"
                 android:layout_height="70dp"

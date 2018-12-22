@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".NewOfferActivity">
 
-    <Button
+    <com.darktech.flfes.CustomFontButton
         android:id="@+id/buttonSendOffer"
         android:layout_width="60dp"
         android:layout_height="60dp"

@@ -32,6 +32,65 @@ module.exports = (app, passport) => {
     	failureFlash: true
    	}));
 
+   	app.get('/dataRegister', (req, res) => {
+		res.render('dataRegister', {
+            message: "",
+            user: req.user
+        });
+	});
+
+	app.post('/dataRegister', (req, res) => {
+		var img = req.files.img;
+	    var id = req.user._id;
+	    var path = `./src/public/IMGUS/${id}.jpg`;
+	    var imgbdPath = '/IMGUS/' + id + '.jpg';
+		var email = req.body.email;
+	    var nombre = req.body.nombre;
+	    var ncuenta = req.body.ncuenta;
+	    var sexo = req.body.sexo;
+	    var tel = req.body.tel;
+	    var carrera = req.body.carrera;
+	    var semestre = req.body.semestre;
+	    var grupo = req.body.grupo;
+	    var turno = req.body.turno;
+
+	    img.mv(path, err => {
+	        if(err) {
+	        	return res.status(500).send({ message : err })
+	        } else {
+			    User.updateOne(
+			   		{
+					  	'_id' : id,
+					  	'info.email' : email
+					},
+					{
+					 	$set: {
+					  		'info.img' : imgbdPath,
+					  		'info.nombre' : nombre,
+					  		'info.ncuenta' : ncuenta,
+					  		'info.sexo' : sexo,
+					  		'info.tel' : tel,
+					  		'info.carrera' : carrera,
+					  		'info.semestre' : semestre,
+					  		'info.grupo' : grupo,
+					  		'info.turno' : turno
+					  	},
+					  	$push: {
+					  		'info.habilidades' : {
+					  			$each: 
+					  				JSON.parse(req.body.habilid)
+					  		}
+					  	}
+					}
+				).then((rawResponse) => {
+					res.redirect('/dashboard');
+				}).catch((err) => {
+					console.log(err);
+				});
+			}
+	    });
+	});
+
 	app.get('/getpassword', (req, res) => {
 		res.render('getpassword', {
             message: ""
@@ -92,84 +151,28 @@ module.exports = (app, passport) => {
 		});
 	});
 
-	app.get('/dataRegister', (req, res) => {
-		res.render('dataRegister', {
-            message: "",
-            user: req.user
-        });
-	});
-
-	app.post('/dataRegister', (req, res) => {
-		var img = req.files.img;
-	    var id = req.user._id;
-	    var path = `./src/public/IMGUS/${id}.jpg`;
-	    var imgbdPath = '/IMGUS/' + id + '.jpg';
-		var email = req.body.email;
-	    var nombre = req.body.nombre;
-	    var ncuenta = req.body.ncuenta;
-	    var sexo = req.body.sexo;
-	    var tel = req.body.tel;
-	    var carrera = req.body.carrera;
-	    var semestre = req.body.semestre;
-	    var grupo = req.body.grupo;
-	    var turno = req.body.turno;
-
-	    img.mv(path, err => {
-	        if(err) {
-	        	return res.status(500).send({ message : err })
-	        } else {
-			    User.updateOne(
-			   		{
-					  	'_id' : id,
-					  	'info.email' : email
-					},
-					{
-					 	$set: {
-					  		'info.img' : imgbdPath,
-					  		'info.nombre' : nombre,
-					  		'info.ncuenta' : ncuenta,
-					  		'info.sexo' : sexo,
-					  		'info.tel' : tel,
-					  		'info.carrera' : carrera,
-					  		'info.semestre' : semestre,
-					  		'info.grupo' : grupo,
-					  		'info.turno' : turno
-					  	},
-					  	$push: {
-					  		'info.habilidades' : {
-					  			$each: 
-					  				JSON.parse(req.body.habilid)
-					  		}
-					  	}
-					}
-				).then((rawResponse) => {
-					res.redirect('/dashboard');
-				}).catch((err) => {
-					console.log(err);
-				});
-			}
-	    });
-	});
-
-	app.get('/profile', isLoggedIn, (req, res) => {
-		res.render('profile', {
-			user: req.user
-		});
-	});
-
-	app.get('/logout', (req, res) => {
-		req.logout();
-		res.redirect('/');
-	})
-
-	app.get('/settings', isLoggedIn, (req, res) => {
-		res.render('settings', {
-			user: req.user
-		});
-	});
-
 	app.get('/dashboard', isLoggedIn, async (req, res) => {
-		const offers = await Offer.find({'email': {$ne : req.user.info.email}}).sort({'fechaPublicacion': 1, 'horaPublicacion': -1});
+		const offers = await Offer.find(
+			{ 
+				$and: [ 
+					{
+						'email': {
+							$ne: req.user.info.email
+						} 
+					}, 
+					{
+						'habilidades': {
+							$in: req.user.info.habilidades
+						} 
+					}
+				]
+			}
+		).sort(
+			{
+				'fechaPublicacion': 1, //Ordena de la fecha más próxima a la más vieja
+				'horaPublicacion': -1 //Ortdena de la hora más próxima a la más vieja
+			}
+		);
 
 		var contenido = "";
 
@@ -224,6 +227,18 @@ module.exports = (app, passport) => {
 
 				res.redirect('/dashboard');
 			});
+	});
+
+	app.get('/profile', isLoggedIn, (req, res) => {
+		res.render('profile', {
+			user: req.user
+		});
+	});
+
+	app.get('/settings', isLoggedIn, (req, res) => {
+		res.render('settings', {
+			user: req.user
+		});
 	});
 
 	app.post('/uploadpi', (req, res) => {
@@ -284,6 +299,11 @@ module.exports = (app, passport) => {
 			}
 	    });
 	});
+
+	app.get('/logout', (req, res) => {
+		req.logout();
+		res.redirect('/');
+	})
 
 	function isLoggedIn (req, res, next) {
 		if (req.isAuthenticated()) {

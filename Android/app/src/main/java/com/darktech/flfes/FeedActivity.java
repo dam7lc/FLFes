@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -81,20 +83,18 @@ public class FeedActivity extends Activity {
             switch(response){
                 case 0:
                     final String titulo = in.getString("titulo");
-                    final String de = in.getString("de");
                     final String materia = in.getString("materia");
-                    final String tema = in.getString("tema");
-                    final String descripcion = in.getString("descripcion");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             CardView offer = new CardView(getApplicationContext());
                             offer.setRadius(20);
                             offer.setElevation(20);
+                            offer.setCardBackgroundColor(getResources().getColor(R.color.cardBackground));
                             LinearLayout ll = new LinearLayout(getApplicationContext());
                             ll.setOrientation(LinearLayout.VERTICAL);
-                            TextView tit = new TextView(getApplicationContext());
-                            TextView mat = new TextView(getApplicationContext());
+                            com.darktech.flfes.MaliFontTextView tit = new com.darktech.flfes.MaliFontTextView(getApplicationContext());
+                            com.darktech.flfes.MaliFontTextView mat = new com.darktech.flfes.MaliFontTextView(getApplicationContext());
                             tit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                             tit.setText(titulo);
                             tit.setGravity(Gravity.CENTER);
@@ -102,10 +102,18 @@ public class FeedActivity extends Activity {
                             mat.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                             mat.setText(materia);
                             mat.setGravity(Gravity.CENTER);
+                            mat.setTextColor(getResources().getColor(R.color.textCardMate));
                             ll.addView(tit);
                             ll.addView(mat);
                             offer.addView(ll);
                             llfeed.addView(offer);
+
+                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) offer.getLayoutParams();
+                            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                            int pixels = Math.round(10 * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+
+                            layoutParams.setMargins(pixels , pixels, pixels, 0);
+                            offer.requestLayout();
                         }
                     });
                     break;

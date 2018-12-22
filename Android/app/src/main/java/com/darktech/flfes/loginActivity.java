@@ -92,9 +92,10 @@ public class loginActivity extends Activity {
             res = in.getInt("response");
             switch(res) {
                 case 0:
-                    Intent profile = new Intent(getApplicationContext(), FeedActivity.class);
-                    profile.putExtra("email", email);
-                    startActivity(profile);
+                   Intent Response = getIntent();
+                   Response.putExtra("email", email);
+                   Response.putExtra("password", password);
+                   setResult(RESULT_OK, Response);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -40,7 +40,7 @@
                 tools:layout_editor_absoluteX="64dp"
                 tools:layout_editor_absoluteY="60dp" />
 
-            <Button
+            <com.darktech.flfes.CustomFontButton
                 android:id="@+id/buttonProfileEdit"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -48,7 +48,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="@android:drawable/ic_menu_edit" />
 
-            <TextView
+            <com.darktech.flfes.MaliFontTextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
+            <com.darktech.flfes.MaliFontTextView
                 android:id="@+id/textViewNick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 tools:layout_editor_absoluteX="-2dp"
                 tools:layout_editor_absoluteY="311dp" />
 
-            <TextView
+            <com.darktech.flfes.MaliFontTextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
+            <com.darktech.flfes.MaliFontTextView
                 android:id="@+id/textViewPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                 tools:layout_editor_absoluteX="-3dp"
                 tools:layout_editor_absoluteY="357dp" />
 
-            <TextView
+            <com.darktech.flfes.MaliFontTextView
                 android:id="@+id/textView5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
+            <com.darktech.flfes.MaliFontTextView
                 android:id="@+id/textViewCareer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="427dp" />
 
-            <TextView
+            <com.darktech.flfes.MaliFontTextView
                 android:id="@+id/textView7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

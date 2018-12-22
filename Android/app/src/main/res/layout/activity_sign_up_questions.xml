@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
+        <com.darktech.flfes.MaliFontTextView
             android:id="@+id/textViewInteresado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
                 android:textColor="@color/textColor" />
         </RadioGroup>
 
-        <Button
+        <com.darktech.flfes.CustomFontButton
             android:id="@+id/buttonQuestionsNext"
             android:layout_width="70dp"
             android:layout_height="70dp"

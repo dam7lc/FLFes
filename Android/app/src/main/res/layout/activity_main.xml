@@ -8,7 +8,7 @@
     android:background="@drawable/backgroundmodified"
     tools:context=".MainActivity">
 
-    <Button
+    <com.darktech.flfes.CustomFontButton
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <TextView
+    <com.darktech.flfes.MaliFontTextView
         android:id="@+id/textIntro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.darktech.flfes.MaliFontTextView
         android:id="@+id/textDescription"
         android:layout_width="244dp"
         android:layout_height="98dp"
@@ -64,7 +64,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <Button
+    <com.darktech.flfes.CustomFontButton
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="47dp"
@@ -102,7 +102,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
+    <com.darktech.flfes.CustomFontButton
         android:id="@+id/buttonConnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
