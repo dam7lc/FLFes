@@ -16,10 +16,11 @@ import com.darktech.flfes.TApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     private Socket tsocket;
     private TextView Txtserver;
@@ -54,24 +55,27 @@ public class MainActivity extends Activity {
                 tsocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
                 tsocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
                 tsocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-                tsocket.on("loginResponse", onLoginResponse);
                 tsocket.connect();
 
                 sp = getSharedPreferences("login", MODE_PRIVATE);
 
                 if(sp.getBoolean("logged", false))
                 {
-                    String username = sp.getString("email", "");
+                    String email = sp.getString("email", "");
                     String password = sp.getString("password", "");
                     JSONObject sender = new JSONObject();
                     try{
-                        sender.put("email", username);
+                        sender.put("email", email);
                         sender.put("password", password);
                     } catch(JSONException e)
                     {
                         Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     }
-                    tsocket.emit("attemptLogin", sender); //TODO: descomentar para iniciar sesion automaticamente
+                    tsocket.emit("autoLogin", sender);
+                    Intent profile = new Intent(getApplicationContext(), FeedActivity.class);
+                    profile.putExtra("email", email);
+                    startActivity(profile);
+                    finish();
                 }
            }
        });
@@ -115,35 +119,27 @@ public class MainActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
-            String email = data.getStringExtra("email");
-            String pass = data.getStringExtra("password");
+            final String email = data.getStringExtra("email");
+            final String pass = data.getStringExtra("password");
             sp.edit().putString("email", email).apply();
             sp.edit().putString("password", pass).apply();
             sp.edit().putBoolean("logged", true).apply();
-        }
-        switch(requestCode){
-            case 0:
-                break;
-            case 1:
-                String email = data.getStringExtra("email");
-                Intent profile = new Intent(getApplicationContext(), FeedActivity.class);
-                profile.putExtra("email", email);
-                startActivity(profile);
-                finish();
-                break;
-            default:
-                break;
+
+            switch(requestCode){
+                case 0:
+                    break;
+                case 1:
+                    Intent profile = new Intent(getApplicationContext(), FeedActivity.class);
+                    profile.putExtra("email", email);
+                    startActivity(profile);
+                    finish();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-
-    private Emitter.Listener onLoginResponse = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject response = (JSONObject) args[0];
-                    loginresponse(response);
-                }
-    };
 
     private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
@@ -196,64 +192,7 @@ public class MainActivity extends Activity {
         tsocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
         tsocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         tsocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        tsocket.off("loginResponse", onLoginResponse);
     }
 
-    private void loginresponse(JSONObject response){
-        int res;
-        String email = sp.getString("email", "");
-        try{
-            res = response.getInt("response");
-            switch(res) {
-                case 0:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Inicio de sesion correcto", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    Intent profile = new Intent(getApplicationContext(), FeedActivity.class);
-                    profile.putExtra("email", email);
-                    startActivity(profile);
-                    finish();
-                    break;
-                case 1:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "NombreIncorrecto", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    break;
-                case 2:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "ContraseñaIncorrecta", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    break;
-                case 3:
-                    Intent signup = new Intent(this, com.darktech.flfes.signUpProfileActivity.class);
-                    signup.putExtra("email", email);
-                    startActivity(signup);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Falta completar el perfil", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    finish();
-                    break;
-            }
-        } catch (JSONException e){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "wrong login response", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
+
 }

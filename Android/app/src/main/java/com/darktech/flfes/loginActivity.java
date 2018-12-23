@@ -14,10 +14,11 @@ import com.darktech.flfes.TApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class loginActivity extends Activity {
+public class loginActivity extends AppCompatActivity {
 
     private Socket tsocket;
     private EditText em;
@@ -74,7 +75,7 @@ public class loginActivity extends Activity {
             sender.put("password", password);
         } catch(JSONException e)
         {
-            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
         }
         tsocket.emit("attemptLogin", sender);
     }
@@ -92,17 +93,10 @@ public class loginActivity extends Activity {
             res = in.getInt("response");
             switch(res) {
                 case 0:
-                   Intent Response = getIntent();
-                   Response.putExtra("email", email);
-                   Response.putExtra("password", password);
-                   setResult(RESULT_OK, Response);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Inicio de sesion correcto", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
+                    Intent Response = getIntent();
+                    Response.putExtra("email", email);
+                    Response.putExtra("password", password);
+                    setResult(RESULT_OK, Response);
                     finish();
                     break;
                 case 1:

@@ -4,8 +4,9 @@ const Offer = require('../app/models/offer')
 module.exports = (io) => {
 	io.on('connection', function (socket){ //Se ejecuta con un socket.on
 	console.log("User Connected :)");
+
 		socket.on('attemptLogin', function (data) { //Se ejecuta cuando se inicia sesion
-			console.log(data);
+			console.log("login with: " + data);
 		    var email = data['email'];
 		    var password = data['password'];
 		    User.findOne({'info.email': email}, function(err, user) {
@@ -27,7 +28,11 @@ module.exports = (io) => {
 			    socket.emit('loginResponse', {response: 0});
 
 		    });
-	    });
+		});
+		
+		socket.on('autoLogin', function(data){
+			//TODO registrar login automatico 
+		});
 
 	    socket.on('attemptSignup', function (data){ //Se ejecuta cuando se envia informacion de registro
 		    User.findOne({'info.email': data['email']}, function(err, user) {
@@ -153,6 +158,7 @@ module.exports = (io) => {
 		})
 
 		socket.on('populateOffers', function(data){
+			console.log(data);
 			User.findOne({'info.email': data['email']}, function(err, user){
 				if(err){
 					console.log(err);

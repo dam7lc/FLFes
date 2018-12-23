@@ -35,10 +35,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class signUpProfileActivity extends Activity {
+public class signUpProfileActivity extends AppCompatActivity {
 
     private ImageView uploadImg;
     private EditText nick;

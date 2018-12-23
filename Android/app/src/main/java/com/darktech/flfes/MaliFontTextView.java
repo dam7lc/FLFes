@@ -5,7 +5,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-public class MaliFontTextView extends TextView {
+public class MaliFontTextView extends androidx.appcompat.widget.AppCompatTextView {
     public MaliFontTextView(Context context) {
         super(context);
         setFont();
