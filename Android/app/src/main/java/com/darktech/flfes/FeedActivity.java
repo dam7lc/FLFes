@@ -1,150 +1,47 @@
 package com.darktech.flfes;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.darktech.flfes.TApplication;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.view.MenuItem;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-public class FeedActivity extends Activity {
+public class FeedActivity extends AppCompatActivity {
 
-    Socket tsocket;
-    String email;
-    TApplication app;
-    LinearLayout llfeed;
-    Button btnOffer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
+        setContentView(R.layout.activity_offers);
+        BottomNavigationView bottomNav = findViewById(R.id.navigation);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new OffersFeedFragment()).commit();
+        bottomNav.setOnNavigationItemSelectedListener(bottomNavItemSelected);
 
-        llfeed = findViewById(R.id.linearLayoutFeed);
-        btnOffer = findViewById(R.id.buttonNuevaOferta);
-
-
-
-        Intent intentFrom = getIntent();
-        email = intentFrom.getStringExtra("email");
-
-        app = (TApplication) getApplication();
-        tsocket = app.getSocket();
-        tsocket.on("populateOffersResponse", onPopulateOffersResponse);
-
-        JSONObject info = new JSONObject();
-        try {
-            info.put("email", email);
-            tsocket.emit("populateOffers", info);
-        } catch (final JSONException e){
-            Log.i("Error", e.toString());
-        }
-
-        btnOffer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent newOffer = new Intent(getApplicationContext(), NewOfferActivity.class);
-                newOffer.putExtra("email", email);
-                startActivity(newOffer);
-                finish();
-            }
-        });
     }
 
-    Emitter.Listener onPopulateOffersResponse = new Emitter.Listener() {
+   private BottomNavigationView.OnNavigationItemSelectedListener bottomNavItemSelected = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
-        public void call(Object... args) {
-            JSONObject response = (JSONObject)args[0];
-            populateOffersResponse(response);
-        }
-    };
-
-    private void populateOffersResponse(JSONObject in){
-        try{
-            int response = in.getInt("response");
-            switch(response){
-                case 0:
-                    final String titulo = in.getString("titulo");
-                    final String materia = in.getString("materia");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            CardView offer = new CardView(getApplicationContext());
-                            offer.setRadius(20);
-                            offer.setElevation(20);
-                            offer.setCardBackgroundColor(getResources().getColor(R.color.cardBackground));
-                            LinearLayout ll = new LinearLayout(getApplicationContext());
-                            ll.setOrientation(LinearLayout.VERTICAL);
-                            com.darktech.flfes.MaliFontTextView tit = new com.darktech.flfes.MaliFontTextView(getApplicationContext());
-                            com.darktech.flfes.MaliFontTextView mat = new com.darktech.flfes.MaliFontTextView(getApplicationContext());
-                            tit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                            tit.setText(titulo);
-                            tit.setGravity(Gravity.CENTER);
-                            tit.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                            mat.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                            mat.setText(materia);
-                            mat.setGravity(Gravity.CENTER);
-                            mat.setTextColor(getResources().getColor(R.color.textCardMate));
-                            ll.addView(tit);
-                            ll.addView(mat);
-                            offer.addView(ll);
-                            llfeed.addView(offer);
-
-                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) offer.getLayoutParams();
-                            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                            int pixels = Math.round(10 * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-
-                            layoutParams.setMargins(pixels , pixels, pixels, 0);
-                            offer.requestLayout();
-                        }
-                    });
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            Fragment selectedFragment = null;
+            switch(menuItem.getItemId()){
+                case R.id.navigation_offers:
+                    selectedFragment = new OffersFeedFragment();
                     break;
-                case 1:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            CardView info = new CardView(getApplicationContext());
-                            TextView txtinfo = new TextView(getApplicationContext());
-                            txtinfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
-                            txtinfo.setText("No hay ofertas disponibles");
-                            info.addView(txtinfo);
-                            llfeed.addView(info);
-                        }
-                    });
+                case R.id.navigation_dashboard:
+                    selectedFragment = new DashboardFragment();
                     break;
-                default:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Error, wrong populate feed response", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                case R.id.navigation_notifications:
+                    selectedFragment = new NotificationsFragment();
+                    break;
+                case R.id.navigation_settings:
+                    selectedFragment = new SettingsFragment();
+                    break;
             }
-        } catch(final JSONException e){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, selectedFragment).commit();
+            return true;
         }
-    }
+   };
 }

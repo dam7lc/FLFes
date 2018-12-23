@@ -13,10 +13,11 @@ import com.darktech.flfes.TApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class signUpActivity extends Activity {
+public class signUpActivity extends AppCompatActivity {
 
     private Socket tsocket;
     private String email;

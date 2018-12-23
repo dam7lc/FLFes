@@ -27,11 +27,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.socket.client.Socket;
 import io.socket.client.Url;
 import io.socket.emitter.Emitter;
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends AppCompatActivity {
 
     private ImageView imgProfile;
     private TextView textNick;

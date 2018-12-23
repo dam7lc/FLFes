@@ -54,4 +54,9 @@
 
     <string name="interesado">Estas interesado en: </string>
     <string name="indiferente">Indiferente</string>
+    <string name="title_activity_offers">OffersActivity</string>
+    <string name="title_offers">Ofertas(?)</string>
+    <string name="title_dashboard">Tablero</string>
+    <string name="title_notifications">Notificaciones</string>
+    <string name="title_ajustes">Ajustes</string>
 </resources>

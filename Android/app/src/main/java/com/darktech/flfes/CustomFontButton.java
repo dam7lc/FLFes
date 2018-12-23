@@ -3,9 +3,8 @@ package com.darktech.flfes;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.Button;
 
-public class CustomFontButton extends Button {
+public class CustomFontButton extends androidx.appcompat.widget.AppCompatButton {
     public CustomFontButton(Context context) {
         super(context);
         setFont();

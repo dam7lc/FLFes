@@ -32,7 +32,10 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".FeedActivity" />
-        <activity android:name=".NewOfferActivity"></activity>
+        <activity android:name=".NewOfferActivity" />
+        <activity
+            android:name=".OffersActivity"
+            android:label="@string/title_activity_offers"></activity>
     </application>
 
 </manifest>
