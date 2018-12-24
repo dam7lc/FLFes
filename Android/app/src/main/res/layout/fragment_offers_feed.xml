@@ -34,18 +34,11 @@
                 android:background="@android:drawable/ic_menu_add" />
         </LinearLayout>
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="570dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:id="@+id/linearLayoutFeed"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-            </LinearLayout>
-        </ScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewOffers"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 
