@@ -174,12 +174,13 @@ module.exports = (io) => {
 						return;
 					}
 					else{
+						var num = result;
 						Offer.find({'email': {"$ne": user.info.email}}, function(err, offer){
 							if(err){
 								console.log(err);
 								return;	
 							}
-							offer.forEach(function(offer){
+							offer.forEach(function(offer, position){
 								socket.emit('populateOffersResponse', {
 									response: 0,
 									materia: offer.materia,
@@ -187,7 +188,10 @@ module.exports = (io) => {
 									email: offer.email,
 									tema: offer.tema,
 									descripcion: offer.descripcion
-								})
+								}) 
+								if(position == num-1){
+									socket.emit('finishPopulatingOffers', { response: 0	})
+								}
 							})
 						});
 					}

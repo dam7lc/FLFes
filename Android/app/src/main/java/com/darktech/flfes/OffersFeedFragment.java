@@ -20,29 +20,34 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.LinkedList;
+
 import androidx.annotation.AnimatorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class OffersFeedFragment extends Fragment {
 
 
-    LinearLayout llfeed;
+    //LinearLayout llfeed;
     Button btnOffer;
     Socket tsocket;
     String email;
     TApplication app;
+    private LinkedList<String[]> Offers = new LinkedList<>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_offers_feed, container, false);
-        llfeed = view.findViewById(R.id.linearLayoutFeed);
+        //llfeed = view.findViewById(R.id.linearLayoutFeed);
         btnOffer = view.findViewById(R.id.buttonNuevaOferta);
         Intent intentFrom = getActivity().getIntent();
         email = intentFrom.getStringExtra("email");
@@ -50,6 +55,7 @@ public class OffersFeedFragment extends Fragment {
         app = (TApplication) getActivity().getApplication();
         tsocket = app.getSocket();
         tsocket.on("populateOffersResponse", onPopulateOffersResponse);
+        tsocket.on("finishPopulatingOffers", onFinishPopulatingOffers);
 
         JSONObject info = new JSONObject();
         try {
@@ -78,6 +84,30 @@ public class OffersFeedFragment extends Fragment {
         }
     };
 
+    Emitter.Listener onFinishPopulatingOffers = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            JSONObject response = (JSONObject) args[0];
+            finishPopulatingOffers(response);
+        }
+    };
+
+    private void finishPopulatingOffers(JSONObject in){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RecyclerView offersRecView;
+                OfferAdapter offersAdapter;
+
+                offersRecView = getActivity().findViewById(R.id.recyclerViewOffers);
+                offersAdapter = new OfferAdapter(getActivity(), Offers);
+                offersRecView.setAdapter(offersAdapter);
+                offersRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            }
+        });
+
+    }
+
     private void populateOffersResponse(JSONObject in){
         try{
             int response = in.getInt("response");
@@ -86,7 +116,10 @@ public class OffersFeedFragment extends Fragment {
                     final String titulo = in.getString("titulo");
                     final String materia = in.getString("materia");
                     if(isAdded()){
-                        getActivity().runOnUiThread(new Runnable() {
+                        String[] info = {titulo, materia};
+                        Offers.addLast(info);
+
+                        /*getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 final CardView offer = new CardView(getActivity().getApplicationContext());
@@ -129,7 +162,7 @@ public class OffersFeedFragment extends Fragment {
                                     }
                                 });
                             }
-                        });
+                        });*/
                     }
                     break;
                 case 1:
@@ -137,12 +170,12 @@ public class OffersFeedFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                CardView info = new CardView(getActivity().getApplicationContext());
+                               /* CardView info = new CardView(getActivity().getApplicationContext());
                                 TextView txtinfo = new TextView(getActivity().getApplicationContext());
                                 txtinfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26);
                                 txtinfo.setText("No hay ofertas disponibles");
                                 info.addView(txtinfo);
-                                llfeed.addView(info);
+                                llfeed.addView(info);*/
                             }
                         });
                     }
