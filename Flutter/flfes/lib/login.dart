@@ -1,6 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class AppLogin extends StatelessWidget{
+class AppLogin extends StatefulWidget{
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<AppLogin> {
+  bool isLoggedIn = false;
+  var profileData;
+
+  void initiateFacebookLogin() async {
+    var facebookLogin = FacebookLogin();
+    var facebookLoginResult = await facebookLogin.logInWithReadPermissions(['email']);
+    switch (facebookLoginResult.status) {
+        case FacebookLoginStatus.error:
+          print(facebookLoginResult.errorMessage);
+          onLoginStatusChanged(false);
+          break;
+        case FacebookLoginStatus.cancelledByUser:
+          print("CancelledByUser");
+          onLoginStatusChanged(false);
+          break;
+        case FacebookLoginStatus.loggedIn:
+          print("LoggedIn");
+          var graphResponse = await http.get(
+  'https://graph.facebook.com/v3.2/me?fields=name,first_name,last_name,email&access_token=${facebookLoginResult
+  .accessToken.token}');
+
+          var profile = json.decode(graphResponse.body);
+          print(profile.toString());
+
+          onLoginStatusChanged(true, profileData: profile);
+          break;
+    }
+  }
+
+  void onLoginStatusChanged(bool isLoggedIn, {profileData}) {
+    setState(() {
+      this.isLoggedIn = isLoggedIn;
+      this.profileData = profileData;
+    });
+  }
+
+
   @override
   Widget build(BuildContext context){
     return new Scaffold(
@@ -28,7 +74,6 @@ class AppLogin extends StatelessWidget{
                 ),
               ),
               
-
               new Container(
                 padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 150.0),
                 child: new AnimatedOpacity(
@@ -43,13 +88,26 @@ class AppLogin extends StatelessWidget{
                 ),
               ),
 
-              
-
-              
+              new Container(
+                padding: EdgeInsets.only(left: 100.0, right: 100.0, top:100.0),
+                child: isLoggedIn
+                ? _showdata(profileData)
+                : _showLogin(),
+              ),
             ],
           ),
         ]
       ),
     );
   }
+
+  _showdata(profileData){
+    return new Text("${profileData['name']}", softWrap: true,);
+  }
+
+  _showLogin(){
+    return new SignInButton(Buttons.Facebook, onPressed: initiateFacebookLogin);
+  }
 }
+
+  
