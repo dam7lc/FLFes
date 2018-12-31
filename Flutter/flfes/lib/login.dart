@@ -19,6 +19,8 @@ class AppLogin extends StatefulWidget{
 }
 
 class _LoginState extends State<AppLogin> {
+
+  bool _start = false;
   bool isLoggedIn = false;
   bool isGLoggedIn = false;
   String _contactText;
@@ -26,7 +28,7 @@ class _LoginState extends State<AppLogin> {
   GoogleSignInAccount _currentUser;
 
   @override
-  initState(){
+  void initState(){
     super.initState();
 
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account){
@@ -38,8 +40,13 @@ class _LoginState extends State<AppLogin> {
     });
 
     
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startAnimation(context));
   }
 
+  
+  void _startAnimation(BuildContext context){
+    setState((){_start = true;});
+  }
   Future <void> _handleLogin() async {
     print("executed");
     final http.Response response = await http.get(
@@ -115,57 +122,76 @@ class _LoginState extends State<AppLogin> {
 
   @override
   Widget build(BuildContext context){
+
     return new Scaffold(
       body: new Stack(
         alignment: AlignmentDirectional.center,
         children: <Widget> [
           new Container(
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                image: new AssetImage('images/backgroundmodified.jpg'), fit: BoxFit.cover,),
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                  image: new AssetImage('images/backgroundmodified.jpg'), fit: BoxFit.cover,),
+              ),
             ),
-          ),
+          
           new ListView(
             children: [
-              new Container(
-                padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 100.0),
-                child: new AnimatedOpacity(
-                  opacity: 1.0,
-                  duration: Duration(milliseconds: 500),
-                  child: new Text(
-                    'Titulo Atractivo ( ͡° ͜ʖ ͡°)',
-                    style: Theme.of(context).textTheme.title,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              
-              new Container(
-                padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 150.0),
-                child: new AnimatedOpacity(
-                  opacity: 1.0,
-                  duration: Duration(milliseconds: 500),
-                  child: new Text(
-                    '¿Necesitas ayuda para estudiar algun tema? ¿Deseas ayudar a otros estudiantes? ¡Bienvenido!',
-                    textAlign: TextAlign.center,
-                    softWrap: true,
-                    style: Theme.of(context).textTheme.subtitle
+              new AnimatedOpacity(
+                opacity: _start ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 3000), 
+                child: new Container(
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 100.0),
+                  child: new AnimatedOpacity(
+                    opacity: 1.0,
+                    duration: Duration(milliseconds: 500),
+                    child: new Text(
+                      'Titulo Atractivo ( ͡° ͜ʖ ͡°)',
+                      style: Theme.of(context).textTheme.title,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
 
-              new Container(
-                padding: EdgeInsets.only(left: 100.0, right: 100.0, top:100.0),
-                child: isLoggedIn
-                ? _showdata(profileData)
-                : _showFLogin(),
+              new AnimatedOpacity(
+                opacity: _start ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 3000), 
+                child: new Container(
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 150.0),
+                  child: new AnimatedOpacity(
+                    opacity: 1.0,
+                    duration: Duration(milliseconds: 500),
+                    child: new Text(
+                      '¿Necesitas ayuda para estudiar algun tema? ¿Deseas ayudar a otros estudiantes? ¡Bienvenido!',
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                      
+                      style: Theme.of(context).textTheme.subtitle
+                    ),
+                  ),
+                ),
               ),
 
-              new Container(
-                padding: EdgeInsets.only(left: 100.0, right: 100.0, top: 20.0),
-                child: isGLoggedIn
-                ? new Text(_contactText, softWrap: true,)
-                : _showGLogin(),
+              new AnimatedOpacity(
+                opacity: _start ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 3000), 
+                child: new Container(
+                  padding: EdgeInsets.only(left: 100.0, right: 100.0, top:100.0),
+                  child: isLoggedIn
+                  ? _showdata(profileData)
+                  : _showFLogin(),
+                ),
+              ),
+
+              new AnimatedOpacity(
+                opacity: _start ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 3000), 
+                  child: new Container(
+                  padding: EdgeInsets.only(left: 100.0, right: 100.0, top: 20.0),
+                  child: isGLoggedIn
+                  ? new Text(_contactText, softWrap: true,)
+                  : _showGLogin(),
+                ),
               ),
             ],
           ),
