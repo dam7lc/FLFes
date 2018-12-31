@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flfes/profile.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -8,7 +9,7 @@ import 'dart:convert';
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: [
     'email',
-    'profile'
+    'profile',
   ],
 );
 
@@ -42,7 +43,7 @@ class _LoginState extends State<AppLogin> {
   Future <void> _handleLogin() async {
     print("executed");
     final http.Response response = await http.get(
-          'https://www.googleapis.com/oauth2/v2/userinfo',
+          'https://people.googleapis.com/v1/people/me?requestMask.includeField=person.names,person.photos,person.emailAddresses,person.genders',
           headers: await _currentUser.authHeaders,
     );
 
@@ -55,7 +56,9 @@ class _LoginState extends State<AppLogin> {
       return;
     }
 
-    print(response);
+    
+    final Map<String, dynamic> data = json.decode(response.body);
+    print(data.toString());
   }
 
   Future<void> _handleSignIn() async {
@@ -81,7 +84,7 @@ class _LoginState extends State<AppLogin> {
         case FacebookLoginStatus.loggedIn:
           print("LoggedIn");
           var graphResponse = await http.get(
-  'https://graph.facebook.com/v3.2/me?fields=name,first_name,last_name,email&access_token=${facebookLoginResult
+  'https://graph.facebook.com/v3.2/me?fields=name,picture.height(200),email&access_token=${facebookLoginResult
   .accessToken.token}');
 
           var profile = json.decode(graphResponse.body);
@@ -97,8 +100,18 @@ class _LoginState extends State<AppLogin> {
       this.isLoggedIn = isLoggedIn;
       this.profileData = profileData;
     });
+
+    _startProfile(profileData['name'], profileData['email'], '', profileData['picture']['data']['url']);
   }
 
+  void _startProfile(String name, String email, String gender, String picture){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfileWidget(name: name, email: email, gender: gender, picture: picture),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context){
@@ -149,7 +162,7 @@ class _LoginState extends State<AppLogin> {
               ),
 
               new Container(
-                padding: EdgeInsets.only(left: 100.0, right: 100.0, top:100.0),
+                padding: EdgeInsets.only(left: 100.0, right: 100.0, top: 20.0),
                 child: isGLoggedIn
                 ? new Text(_contactText, softWrap: true,)
                 : _showGLogin(),
@@ -162,7 +175,7 @@ class _LoginState extends State<AppLogin> {
   }
 
   _showdata(profileData){
-    return new Text("${profileData['name']}", softWrap: true,);
+    return new Text("${profileData['email']}", softWrap: true,);
   }
 
   _showFLogin(){
