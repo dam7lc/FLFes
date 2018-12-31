@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: [
+    'email',
+    'profile'
+  ],
+);
 
 class AppLogin extends StatefulWidget{
   @override
@@ -11,7 +19,52 @@ class AppLogin extends StatefulWidget{
 
 class _LoginState extends State<AppLogin> {
   bool isLoggedIn = false;
+  bool isGLoggedIn = false;
+  String _contactText;
   var profileData;
+  GoogleSignInAccount _currentUser;
+
+  @override
+  initState(){
+    super.initState();
+
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account){
+      _currentUser = account;
+      if(_currentUser != null){
+        isGLoggedIn = true;
+        _handleLogin();   
+      }
+    });
+
+    
+  }
+
+  Future <void> _handleLogin() async {
+    print("executed");
+    final http.Response response = await http.get(
+          'https://www.googleapis.com/oauth2/v2/userinfo',
+          headers: await _currentUser.authHeaders,
+    );
+
+    if (response.statusCode != 200) {
+      setState(() {
+        _contactText = "People API gave a ${response.statusCode} "
+            "response. Check logs for details.";
+      });
+      print('People API ${response.statusCode} response: ${response.body}');
+      return;
+    }
+
+    print(response);
+  }
+
+  Future<void> _handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      print(error);
+    }
+  }
 
   void initiateFacebookLogin() async {
     var facebookLogin = FacebookLogin();
@@ -92,7 +145,14 @@ class _LoginState extends State<AppLogin> {
                 padding: EdgeInsets.only(left: 100.0, right: 100.0, top:100.0),
                 child: isLoggedIn
                 ? _showdata(profileData)
-                : _showLogin(),
+                : _showFLogin(),
+              ),
+
+              new Container(
+                padding: EdgeInsets.only(left: 100.0, right: 100.0, top:100.0),
+                child: isGLoggedIn
+                ? new Text(_contactText, softWrap: true,)
+                : _showGLogin(),
               ),
             ],
           ),
@@ -105,8 +165,12 @@ class _LoginState extends State<AppLogin> {
     return new Text("${profileData['name']}", softWrap: true,);
   }
 
-  _showLogin(){
+  _showFLogin(){
     return new SignInButton(Buttons.Facebook, onPressed: initiateFacebookLogin);
+  }
+
+  _showGLogin(){
+    return new SignInButton(Buttons.Google, onPressed: _handleSignIn);
   }
 }
 
