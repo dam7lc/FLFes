@@ -5,6 +5,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flfes/gmodels.dart';
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: [
@@ -84,14 +85,23 @@ class _LoginState extends State<AppLogin> {
 
     final data = json.decode(response.body);
     final names = data['names'];
+    final photos = data['photos'];
+    final gender = data['genders'];
+    final emails = data['emailAddresses'];
 
     //print(data['names']['displayName']);
 
     //final jsonResponse = json.decode(jsonString);
     NamesList namesList = NamesList.fromJson(names);
+    PhotosList photosList = PhotosList.fromJson(photos);
+    GenderList genderList = GenderList.fromJson(gender);
+    EMailsList emailsList = EMailsList.fromJson(emails);
     print(namesList.names[0].displayName);
+    print(photosList.photos[0].url);
+    print(genderList.gender[0].value);
+    print(emailsList.emails[0].value);
 
-  
+    _startProfile(namesList.names[0].displayName, emailsList.emails[0].value, genderList.gender[0].value, photosList.photos[0].url);
   }
 
   Future<void> _handleSignIn() async {
@@ -121,8 +131,6 @@ class _LoginState extends State<AppLogin> {
   .accessToken.token}');
 
           var profile = json.decode(graphResponse.body);
-          print(profile.toString());
-
           onLoginStatusChanged(true, profileData: profile);
           break;
     }
@@ -242,82 +250,6 @@ class _LoginState extends State<AppLogin> {
 
 }
 
-class Nms{
-  NmsMeta nmsMeta;
-  String displayName;
-  String familyName;
-  String givenName;
-  String displayNameLastFirst;
 
-  Nms({
-    this.nmsMeta,
-    this.displayName,
-    this.familyName,
-    this.givenName,
-    this.displayNameLastFirst
-  });
-
-  factory Nms.fromJson(Map<String, dynamic> pJson){
-    return Nms(
-      nmsMeta: NmsMeta.fromJson(pJson['metadata']),
-      displayName: pJson['displayName'],
-      familyName: pJson['familyName'],
-      givenName: pJson['givenName'],
-      displayNameLastFirst: pJson['displayNameLastFirst']
-    );
-  }
-
-}
-
-class NmsMeta{
-  bool primary;
-  NmsMetaSrc nmsMetaSrc;
-
-  NmsMeta({
-    this.primary,
-    this.nmsMetaSrc
-  });
-
-  factory NmsMeta.fromJson(Map<String, dynamic> parsedJson){
-    return NmsMeta(
-      primary: parsedJson['primary'],
-      nmsMetaSrc: NmsMetaSrc.fromJson(parsedJson['source'])
-    );
-  }
-}
-
-class NmsMetaSrc{
-  String type;
-  String id;
-
-  NmsMetaSrc({
-    this.type,
-    this.id
-  });
-
-  factory NmsMetaSrc.fromJson(Map<String, dynamic> json){
-    return NmsMetaSrc(
-      type: json['type'],
-      id: json['id']
-    );
-  }
-}
-
-class NamesList{
-  final List<Nms> names;
-
-  NamesList({
-    this.names,
-  });
-
-  factory NamesList.fromJson(List<dynamic> parseJson){
-    List<Nms> names = new List<Nms>();
-    names = parseJson.map((i) => Nms.fromJson(i)).toList();
-    
-    return new NamesList(
-      names: names,
-    );
-  }
-}
 
   

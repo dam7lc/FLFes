@@ -12,6 +12,7 @@ class ProfileWidget extends StatefulWidget{
 
 class _ProfileState extends State<ProfileWidget> {
   int _radiovalue = -1;
+  
   List _carreras = [
       "Arquitectura",
       "Comunicación y periodismo",
@@ -53,7 +54,11 @@ class _ProfileState extends State<ProfileWidget> {
   }
   @override
   Widget build(BuildContext context){
-    //if(widget.gender == )
+    if(widget.gender == "male"){
+      _radiovalue = 0;
+    } else if(widget.gender == "female"){
+      _radiovalue = 1;
+    }
     return new Scaffold(
       backgroundColor: Color.fromARGB(255, 0, 21, 81),
       body: new ListView(
@@ -227,11 +232,6 @@ class _ProfileState extends State<ProfileWidget> {
                             value: 2,
                             groupValue: _radiovalue,
                             onChanged: _onRadioValueChanged,
-                            /*initialValue: '${widget.gender}',
-                            style: Theme.of(context).textTheme.display1,
-                            decoration: InputDecoration(
-
-                            ),*/
                           ),
 
                           new Expanded(
@@ -273,9 +273,32 @@ class _ProfileState extends State<ProfileWidget> {
             ),
           ),
 
+          new Align(
+            alignment: Alignment.bottomRight,
+            child: new Container(
+              padding: EdgeInsets.all(10.0),
+              child: new Container(
+                height: 50.0,
+                width: 50.0,
+                child: new IconButton(
+                  icon: new Icon(
+                    Icons.navigate_next,
+                    color: Color.fromARGB(255, 150, 150, 150), 
+                    size: 50.0
+                  ), 
+                  onPressed: _nextPressed,
+                ),  
+              ),
+            ),
+          ),
+
         ],
       ), 
     );
+  }
+
+  void _nextPressed(){
+    print("executed");
   }
 
   void _changedDropDownItem(String item){
