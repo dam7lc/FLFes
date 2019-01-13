@@ -16,6 +16,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         unselectedWidgetColor: Color.fromARGB(255, 150, 150, 150),
         
+        canvasColor: Color.fromARGB(255, 0, 15, 50),
+
         accentColor: Color.fromARGB(255, 213, 159, 15),
         cursorColor: Color.fromARGB(255, 150, 150, 150),
         hintColor: Color.fromARGB(255, 150, 150, 150),

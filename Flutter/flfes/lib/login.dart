@@ -18,6 +18,22 @@ class AppLogin extends StatefulWidget{
   _LoginState createState() => _LoginState();
 }
 
+class GData{
+  final String resourceName;
+  final String etag;
+  final List<GNames> names;
+
+  GData({this.resourceName, this.etag, this.names});
+}
+
+class GNames{
+  
+}
+
+class GPhotos{
+
+}
+
 class _LoginState extends State<AppLogin> {
 
   bool _start = false;
@@ -64,8 +80,18 @@ class _LoginState extends State<AppLogin> {
     }
 
     
-    final Map<String, dynamic> data = json.decode(response.body);
-    print(data.toString());
+
+
+    final data = json.decode(response.body);
+    final names = data['names'];
+
+    //print(data['names']['displayName']);
+
+    //final jsonResponse = json.decode(jsonString);
+    NamesList namesList = NamesList.fromJson(names);
+    print(namesList.names[0].displayName);
+
+  
   }
 
   Future<void> _handleSignIn() async {
@@ -157,7 +183,7 @@ class _LoginState extends State<AppLogin> {
                 opacity: _start ? 1.0 : 0.0,
                 duration: Duration(milliseconds: 3000), 
                 child: new Container(
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 150.0),
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 100.0),
                   child: new AnimatedOpacity(
                     opacity: 1.0,
                     duration: Duration(milliseconds: 500),
@@ -176,7 +202,7 @@ class _LoginState extends State<AppLogin> {
                 opacity: _start ? 1.0 : 0.0,
                 duration: Duration(milliseconds: 3000), 
                 child: new Container(
-                  padding: EdgeInsets.only(left: 100.0, right: 100.0, top:100.0),
+                  padding: EdgeInsets.only(left: 50.0, right: 50.0, top:100.0),
                   child: isLoggedIn
                   ? _showdata(profileData)
                   : _showFLogin(),
@@ -187,7 +213,7 @@ class _LoginState extends State<AppLogin> {
                 opacity: _start ? 1.0 : 0.0,
                 duration: Duration(milliseconds: 3000), 
                   child: new Container(
-                  padding: EdgeInsets.only(left: 100.0, right: 100.0, top: 20.0),
+                  padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20.0),
                   child: isGLoggedIn
                   ? new Text(_contactText, softWrap: true,)
                   : _showGLogin(),
@@ -200,6 +226,8 @@ class _LoginState extends State<AppLogin> {
     );
   }
 
+  
+
   _showdata(profileData){
     return new Text("${profileData['email']}", softWrap: true,);
   }
@@ -210,6 +238,85 @@ class _LoginState extends State<AppLogin> {
 
   _showGLogin(){
     return new SignInButton(Buttons.Google, onPressed: _handleSignIn);
+  }
+
+}
+
+class Nms{
+  NmsMeta nmsMeta;
+  String displayName;
+  String familyName;
+  String givenName;
+  String displayNameLastFirst;
+
+  Nms({
+    this.nmsMeta,
+    this.displayName,
+    this.familyName,
+    this.givenName,
+    this.displayNameLastFirst
+  });
+
+  factory Nms.fromJson(Map<String, dynamic> pJson){
+    return Nms(
+      nmsMeta: NmsMeta.fromJson(pJson['metadata']),
+      displayName: pJson['displayName'],
+      familyName: pJson['familyName'],
+      givenName: pJson['givenName'],
+      displayNameLastFirst: pJson['displayNameLastFirst']
+    );
+  }
+
+}
+
+class NmsMeta{
+  bool primary;
+  NmsMetaSrc nmsMetaSrc;
+
+  NmsMeta({
+    this.primary,
+    this.nmsMetaSrc
+  });
+
+  factory NmsMeta.fromJson(Map<String, dynamic> parsedJson){
+    return NmsMeta(
+      primary: parsedJson['primary'],
+      nmsMetaSrc: NmsMetaSrc.fromJson(parsedJson['source'])
+    );
+  }
+}
+
+class NmsMetaSrc{
+  String type;
+  String id;
+
+  NmsMetaSrc({
+    this.type,
+    this.id
+  });
+
+  factory NmsMetaSrc.fromJson(Map<String, dynamic> json){
+    return NmsMetaSrc(
+      type: json['type'],
+      id: json['id']
+    );
+  }
+}
+
+class NamesList{
+  final List<Nms> names;
+
+  NamesList({
+    this.names,
+  });
+
+  factory NamesList.fromJson(List<dynamic> parseJson){
+    List<Nms> names = new List<Nms>();
+    names = parseJson.map((i) => Nms.fromJson(i)).toList();
+    
+    return new NamesList(
+      names: names,
+    );
   }
 }
 

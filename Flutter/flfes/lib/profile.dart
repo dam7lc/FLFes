@@ -25,7 +25,7 @@ class _ProfileState extends State<ProfileWidget> {
       "Ingeniería Mecánica",
       "Pedagogía",
       "Planificación para el Desarrollo Agropecuario",
-      "Relaciones Internacionales"
+      "Relaciones Internacionales",
       "Sociología"
     ];
   List<DropdownMenuItem<String>> _dropDownItems;
@@ -262,10 +262,11 @@ class _ProfileState extends State<ProfileWidget> {
                 ),
                 new Expanded(
                   child: new DropdownButton(
+                    isExpanded: true,
                     value: _carrera,
                     items: _dropDownItems,
                     onChanged: _changedDropDownItem,
-                    style: Theme.of(context).textTheme.display1,
+                    style: Theme.of(context).textTheme.display1                    
                   )
                 ),
               ],
