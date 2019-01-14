@@ -127,7 +127,7 @@ class _LoginState extends State<AppLogin> {
         case FacebookLoginStatus.loggedIn:
           print("LoggedIn");
           var graphResponse = await http.get(
-  'https://graph.facebook.com/v3.2/me?fields=name,picture.height(200),email&access_token=${facebookLoginResult
+  'https://graph.facebook.com/v3.2/me?fields=name,picture.height(400),email&access_token=${facebookLoginResult
   .accessToken.token}');
 
           var profile = json.decode(graphResponse.body);
@@ -223,7 +223,7 @@ class _LoginState extends State<AppLogin> {
                   child: new Container(
                   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20.0),
                   child: isGLoggedIn
-                  ? new Text(_contactText, softWrap: true,)
+                  ? new Text('Already Logged', softWrap: true,)
                   : _showGLogin(),
                 ),
               ),

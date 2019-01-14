@@ -25,7 +25,7 @@ dependencies:
   google_sign_in: ^3.2.4
   
   #english_words: ^3.1.0
-  #adhara_socket_io: ^0.1.6
+  adhara_socket_io: ^0.1.6
 
 dev_dependencies:
   flutter_test:

@@ -57,22 +57,23 @@ module.exports = (io) => {
 		    });
     	});
 
-		socket.on('uploadImg', function (data){ //Se ejecuta cuando se sube una imagen al servidor
+		socket.on('uploadImg', function (data){ 
 			var id;
 			var imgpath;
 			User.findOne({'info.email': data['email']}, function(err, user) {
 				if(err){
 					console.log(err);
 					return;
-				}
-				if(user){
-					id = user.id;
+				} if(!user){
+					var newUser = new User();
+					newUser.info.email = data['email'];
+					id = newUser.id;
 					imgpath = '/IMGUS/'+id+'-profile.jpg';
-					user.info.img = imgpath;
-					user.save(function(err) {
+					newUser.info.img = imgpath;
+
+				    newUser.save(function(err) {
 						if (err) {
-							console.log(err);
-							return;
+							throw err;
 						}
 					});
 					var img = new Buffer(data['img'], 'base64');
@@ -82,7 +83,25 @@ module.exports = (io) => {
 							return;
 						}
 					});
-					socket.emit('uploadImgResponse', {response: 0, img: imgpath});
+					return;
+				} else if(user){
+					id = user.id;
+				imgpath = '/IMGUS/'+id+'-profile.jpg';
+				user.info.img = imgpath;
+				user.save(function(err) {
+					if (err) {
+						console.log(err);
+						return;
+					}
+				});
+				var img = new Buffer(data['img'], 'base64');
+				require('fs').writeFile(__dirname+'/../public'+imgpath, img, function(err){
+					if(err){
+						console.log(err);
+						return;
+					}
+				});
+				socket.emit('uploadImgResponse', {response: 0, img: imgpath});
 				}
 			});
 		});
@@ -95,18 +114,29 @@ module.exports = (io) => {
 				} if(user){
 					user.info.nombre = data['name'];
 					user.info.tel = data['tel'];
-					user.info.sexo = data['sexo'];
+					//user.info.sexo = data['sexo'];
 					user.info.carrera = data['career'];
-					user.info.habilidades = data['habs'];
+					//user.info.habilidades = data['habs'];
 					user.save(function (err){
 						if(err){
 							console.log(err);
 							return;
 						}
 					});
+					socket.emit('profileInfoResponse', {response: 0});
+				} else{
+					var newUser = new User();
+					newUser.info.nombre = data['name'];
+					newUser.info.tel = data['tel'];
+					newUser.info.carrera = data['career'];
+				    newUser.info.email = data['email'];
+				    newUser.save(function(err) {
+						if (err) {
+							throw err;
+						}
+					});
 				}
 			});
-			socket.emit('profileInfoResponse', {response: 0});
 		});
 
 		socket.on('getProfileInfo', function(data){
