@@ -5,66 +5,18 @@ module.exports = (io) => {
 	io.on('connection', function (socket){ //Se ejecuta con un socket.on
 	console.log("User Connected :)");
 
-		socket.on('attemptLogin', function (data) { //Se ejecuta cuando se inicia sesion
-			console.log("login with: " + data);
-		    var email = data['email'];
-		    var password = data['password'];
-		    User.findOne({'info.email': email}, function(err, user) {
-		    	if(err){
-			    	return;
-			    }
-			    if(!user){
-			    	socket.emit('loginResponse', {response: 1, error: "el email no se encuentra registrado"});
-			    	return;
-			    }
-			    if(!user.validatePassword(password)){
-				    socket.emit('loginResponse', {response: 2, error: "Contraseña incorrecta"});
-				    return;
-				}
-				if(!user.info.habilidades || !user.info.nombre || !user.info.tel || !user.info.carrera){
-					socket.emit('loginResponse', {response: 3});
-					return;
-				}
-			    socket.emit('loginResponse', {response: 0});
-
-		    });
-		});
-		
 		socket.on('autoLogin', function(data){
 			//TODO registrar login automatico 
 		});
 
-	    socket.on('attemptSignup', function (data){ //Se ejecuta cuando se envia informacion de registro
-		    User.findOne({'info.email': data['email']}, function(err, user) {
-		    	if (err) {
-			    	return;
-			    }
-		        if (user) {
-			    	socket.emit('signupResponse', {response: 1, error: "El email ya se encuentra registrado"});
-			    	return
-			    } else {
-				    var newUser = new User();
-				    newUser.info.email = data['email'];
-				    newUser.info.password = newUser.generateHash(data['password']);
-				    newUser.save(function(err) {
-				    	if (err) {
-						    throw err;
-					    }
-					    socket.emit('signupResponse', {response: 0}); //se responde a un registro exitoso		
-				    	return;
-				    });
-			    }
-		    });
-    	});
-
-		socket.on('uploadImg', function (data){ 
-			var id;
+		socket.on('uploadImg', function (data){ //Cuando se sube la imagen de perfil al servidor
+			var id; 
 			var imgpath;
 			User.findOne({'info.email': data['email']}, function(err, user) {
 				if(err){
 					console.log(err);
 					return;
-				} if(!user){
+				} if(!user){ //Si el usuario se esta registrando
 					var newUser = new User();
 					newUser.info.email = data['email'];
 					id = newUser.id;
@@ -84,7 +36,7 @@ module.exports = (io) => {
 						}
 					});
 					return;
-				} else if(user){
+				} else if(user){ //Si el usuario ya existe
 					id = user.id;
 				imgpath = '/IMGUS/'+id+'-profile.jpg';
 				user.info.img = imgpath;

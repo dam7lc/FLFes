@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as pkgimage;
 
 
 class ProfileWidget extends StatefulWidget{
@@ -16,6 +20,7 @@ class ProfileWidget extends StatefulWidget{
 const String URI = "http://192.168.0.12:3000/";
 
 class _ProfileState extends State<ProfileWidget> {
+  Image _image;
   SocketIO socket;
   int _radiovalue = 2;
   final _formKey = GlobalKey<FormState>();
@@ -53,6 +58,42 @@ class _ProfileState extends State<ProfileWidget> {
     //var img = base64.encode([widget.picture.file]);
     _sendimg();
   }
+
+  Future getImage() async{
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+
+    File croppedFile = await ImageCropper.cropImage(
+      sourcePath: image.path,
+      ratioX: 1.0,
+      ratioY: 1.0,
+      maxWidth: 512,
+      maxHeight: 512,
+      circleShape: true,
+    );
+
+    pkgimage.Image resized = pkgimage.copyResize(
+      pkgimage.decodeImage(croppedFile.readAsBytesSync()), 
+      640
+    );
+
+    var imgAsBytes = pkgimage.encodeJpg(resized);
+    
+    Image nimage = Image.memory(imgAsBytes);
+
+    var img = base64.encode(imgAsBytes);
+
+    var jdata = json.encode({
+        'email': widget.email.trim(),
+        'img': img
+      });
+    socket.emit('uploadImg', [jdata]);
+
+    setState((){
+      _image = nimage;
+    });
+  }
+
 
   Future<void> _sendimg() async{
     final httpresponse = await http.readBytes(widget.picture); 
@@ -101,7 +142,8 @@ class _ProfileState extends State<ProfileWidget> {
 
       switch(response){
         case 0:
-          _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Registro Exitoso')));
+          //Navigator.of(context).pushReplacement();
+
         break;
       }
     });
@@ -135,21 +177,42 @@ class _ProfileState extends State<ProfileWidget> {
             
             new Align(
               alignment: Alignment.center,
-              child: new Container(
-                padding: EdgeInsets.only(top: 20.0),
-                child: new Container(
-                  height: 200.0,
-                  width: 200.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        widget.picture,
+              child: new Stack(
+                children: [
+                  new Container(
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: new Container(
+                      height: 200.0,
+                      width: 200.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: _image == null 
+                          ? NetworkImage(
+                            widget.picture,
+                            )
+                          : _image.image
+                        ),
                       ),
                     ),
                   ),
-                ),
+
+                  new Positioned(
+                    bottom: 5.0,
+                    height: 30.0,
+                    width: 30.0,
+                    right: 5.0,
+                    child: new IconButton(
+                      icon: new Icon(
+                        Icons.photo,
+                        color: Color.fromARGB(255, 213, 159, 15),
+                        size: 30.0,
+                      ), 
+                      onPressed: getImage,
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -366,6 +429,7 @@ class _ProfileState extends State<ProfileWidget> {
       ),
     );
   }
+
 
   void _onNextPressed(){
     if(_formKey.currentState.validate()){

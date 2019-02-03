@@ -96,12 +96,10 @@ class _LoginState extends State<AppLogin> {
     PhotosList photosList = PhotosList.fromJson(photos);
     GenderList genderList = GenderList.fromJson(gender);
     EMailsList emailsList = EMailsList.fromJson(emails);
-    print(namesList.names[0].displayName);
-    print(photosList.photos[0].url);
-    print(genderList.gender[0].value);
-    print(emailsList.emails[0].value);
+    String photo = photosList.photos[0].url.replaceAll('s100/', '');
+    photo = photo + '-wn=640';
 
-    _startProfile(namesList.names[0].displayName, emailsList.emails[0].value, genderList.gender[0].value, photosList.photos[0].url);
+    _startProfile(namesList.names[0].displayName, emailsList.emails[0].value, genderList.gender[0].value, photo);
   }
 
   Future<void> _handleSignIn() async {
@@ -146,12 +144,9 @@ class _LoginState extends State<AppLogin> {
   }
 
   void _startProfile(String name, String email, String gender, String picture){
-    Navigator.push(
-      context,
-      MaterialPageRoute(
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => ProfileWidget(name: name, email: email, gender: gender, picture: picture),
-      ),
-    );
+      ));
   }
 
   @override
@@ -211,9 +206,7 @@ class _LoginState extends State<AppLogin> {
                 duration: Duration(milliseconds: 3000), 
                 child: new Container(
                   padding: EdgeInsets.only(left: 50.0, right: 50.0, top:100.0),
-                  child: isLoggedIn
-                  ? _showdata(profileData)
-                  : _showFLogin(),
+                  child: _showFLogin(),
                 ),
               ),
 
@@ -222,9 +215,7 @@ class _LoginState extends State<AppLogin> {
                 duration: Duration(milliseconds: 3000), 
                   child: new Container(
                   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20.0),
-                  child: isGLoggedIn
-                  ? new Text('Already Logged', softWrap: true,)
-                  : _showGLogin(),
+                  child: _showGLogin(),
                 ),
               ),
             ],
