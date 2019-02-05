@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flfes/gmodels.dart';
 
+
+//Se definen los scopes a utilizar por google api
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: [
     'email',
@@ -14,44 +16,26 @@ GoogleSignIn _googleSignIn = GoogleSignIn(
   ],
 );
 
-class AppLogin extends StatefulWidget{
+class AppLogin extends StatefulWidget{ //La app entra a este stateful widget al ser creada
   @override
-  _LoginState createState() => _LoginState();
+  _LoginState createState() => _LoginState(); //Se crea y asigna el State del StatefulWidget 
 }
 
-class GData{
-  final String resourceName;
-  final String etag;
-  final List<GNames> names;
+class _LoginState extends State<AppLogin> { //State que utilizara el StatefulWidget AppLogin
 
-  GData({this.resourceName, this.etag, this.names});
-}
+  bool _start = false; //variable que inicia la animacion de fadein de los widgets
+  var profileData; //variable que almacena los datos de la api de facebook
+  GoogleSignInAccount _currentUser; //variable que almacena el token del usuario para solicitar los datos de la api de google
 
-class GNames{
-  
-}
-
-class GPhotos{
-
-}
-
-class _LoginState extends State<AppLogin> {
-
-  bool _start = false;
-  bool isLoggedIn = false;
-  bool isGLoggedIn = false;
-  String _contactText;
-  var profileData;
-  GoogleSignInAccount _currentUser;
-
+  //initState se ejecuta cuando los widgets han sido cargados y mostrados
   @override
-  void initState(){
+  void initState(){ 
     super.initState();
 
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account){
+    //_googleSignIn.onCurrentUserChanged.listen se ejecuta cuando se registra el login en el api de google
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account){ 
       _currentUser = account;
       if(_currentUser != null){
-        isGLoggedIn = true;
         _handleLogin();   
       }
     });
@@ -60,67 +44,70 @@ class _LoginState extends State<AppLogin> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _startAnimation(context));
   }
 
-  
-  void _startAnimation(BuildContext context){
+  //_startAnimation inicia la animacion de fadein de los widgets
+  void _startAnimation(BuildContext context){ 
     setState((){_start = true;});
   }
-  Future <void> _handleLogin() async {
-    print("executed");
-    final http.Response response = await http.get(
+
+  //_handleLogin se ejecuta cuando se recibe una respuesta exitosa de la api de google
+  Future <void> _handleLogin() async { 
+    
+    //se manda un get al api de google 
+    final http.Response response = await http.get( 
           'https://people.googleapis.com/v1/people/me?requestMask.includeField=person.names,person.photos,person.emailAddresses,person.genders',
           headers: await _currentUser.authHeaders,
     );
 
-    if (response.statusCode != 200) {
-      setState(() {
-        _contactText = "People API gave a ${response.statusCode} "
-            "response. Check logs for details.";
-      });
+    //Si la respuesta no es exitosa (200), entonces salir de la funcion
+    if (response.statusCode != 200) { 
       print('People API ${response.statusCode} response: ${response.body}');
       return;
     }
 
-    
-
-
-    final data = json.decode(response.body);
+    final data = json.decode(response.body); 
     final names = data['names'];
     final photos = data['photos'];
     final gender = data['genders'];
     final emails = data['emailAddresses'];
 
-    //print(data['names']['displayName']);
+    //Se hace parse de la respuesta de google en formato JSON a una clase nativa de dart
 
-    //final jsonResponse = json.decode(jsonString);
-    NamesList namesList = NamesList.fromJson(names);
+    NamesList namesList = NamesList.fromJson(names); 
     PhotosList photosList = PhotosList.fromJson(photos);
     GenderList genderList = GenderList.fromJson(gender);
     EMailsList emailsList = EMailsList.fromJson(emails);
-    String photo = photosList.photos[0].url.replaceAll('s100/', '');
-    photo = photo + '-wn=640';
 
+    //se anexa un string para solicitar la imagen de google con una anchura de 640 pixeles
+    String photo = photosList.photos[0].url.replaceAll('s100/', '');
+    photo = photo + '-wn=640'; 
+
+    //Inicia la pantalla de registro de un perfil con los datos obtenidos de la api de google
     _startProfile(namesList.names[0].displayName, emailsList.emails[0].value, genderList.gender[0].value, photo);
   }
 
-  Future<void> _handleSignIn() async {
+
+  //_handleGoogleSignIn se ejecuta cuando se presiona el widget de registrarse con google
+  Future<void> _handleGoogleSignIn() async {
     try {
+      //se espera la respuesta de registrarse con googlesignin
       await _googleSignIn.signIn();
     } catch (error) {
       print(error);
     }
   }
 
-  void initiateFacebookLogin() async {
-    var facebookLogin = FacebookLogin();
+  //_handleFacebookLogin se ejecuta cuando se presiona el widget de registrarse con facebook
+  Future<void> _handleFacebookLogin() async {
+    var facebookLogin = FacebookLogin(); //se inicia la clase facebooklogin
     var facebookLoginResult = await facebookLogin.logInWithReadPermissions(['email']);
     switch (facebookLoginResult.status) {
         case FacebookLoginStatus.error:
           print(facebookLoginResult.errorMessage);
-          onLoginStatusChanged(false);
+          onLoginStatusChanged();
           break;
         case FacebookLoginStatus.cancelledByUser:
           print("CancelledByUser");
-          onLoginStatusChanged(false);
+          onLoginStatusChanged();
           break;
         case FacebookLoginStatus.loggedIn:
           print("LoggedIn");
@@ -129,18 +116,19 @@ class _LoginState extends State<AppLogin> {
   .accessToken.token}');
 
           var profile = json.decode(graphResponse.body);
-          onLoginStatusChanged(true, profileData: profile);
+          onLoginStatusChanged(profileData: profile);
           break;
     }
   }
 
-  void onLoginStatusChanged(bool isLoggedIn, {profileData}) {
-    setState(() {
-      this.isLoggedIn = isLoggedIn;
-      this.profileData = profileData;
-    });
+  void onLoginStatusChanged({profileData}) {
+    if(profileData){
+      setState(() {
+        this.profileData = profileData;
+      });
+      _startProfile(profileData['name'], profileData['email'], '', profileData['picture']['data']['url']);
 
-    _startProfile(profileData['name'], profileData['email'], '', profileData['picture']['data']['url']);
+    }
   }
 
   void _startProfile(String name, String email, String gender, String picture){
@@ -232,11 +220,11 @@ class _LoginState extends State<AppLogin> {
   }
 
   _showFLogin(){
-    return new SignInButton(Buttons.Facebook, onPressed: initiateFacebookLogin);
+    return new SignInButton(Buttons.Facebook, onPressed: _handleFacebookLogin);
   }
 
   _showGLogin(){
-    return new SignInButton(Buttons.Google, onPressed: _handleSignIn);
+    return new SignInButton(Buttons.Google, onPressed: _handleGoogleSignIn);
   }
 
 }

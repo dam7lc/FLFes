@@ -9,7 +9,7 @@ import 'package:image/image.dart' as pkgimage;
 
 
 class ProfileWidget extends StatefulWidget{
-  final String name, email, gender, picture;
+  final String name, email, gender, picture; 
 
   ProfileWidget({Key key, @required this.name, @required this.email, @required this.gender, @required this.picture}) : super (key: key);
 
